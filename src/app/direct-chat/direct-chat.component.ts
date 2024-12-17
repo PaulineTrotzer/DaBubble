@@ -19,8 +19,10 @@ import {
   Firestore,
   getDocs,
   onSnapshot,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from '@angular/fire/firestore';
 import { UserService } from '../services/user.service';
 import { FormsModule } from '@angular/forms';
@@ -80,9 +82,58 @@ export class DirectChatComponent implements OnInit{
   showWelcomeChatText = false;
   showTwoPersonConversationTxt = false;
 
-  ngOnInit(): void {
-    console.log('Hello from direct chat');
-    console.log(this.selectedUser)
+  async ngOnInit(): Promise<void> {
+    await this.getMessages()
+  }
+
+  async getMessages() {
+    const docRef = collection(this.firestore, 'messages');
+    const q = query(
+      docRef,
+      where('recipientId', 'in', [
+        this.selectedUser?.id,
+        this.global.currentUserData?.id,
+      ]),
+      where('senderId', 'in', [
+        this.selectedUser?.id,
+        this.global.currentUserData?.id,
+      ])
+    );
+    onSnapshot(q, (querySnapshot) => {
+      this.messagesData = [];
+      querySnapshot.forEach((doc) => {
+        const messageData = doc.data();
+        if (messageData['timestamp'] && messageData['timestamp'].toDate) {
+          messageData['timestamp'] = messageData['timestamp'].toDate();
+        }
+        if (
+          (messageData['senderId'] === this.global.currentUserData.id &&
+            messageData['recipientId'] === this.selectedUser.id) ||
+          (messageData['senderId'] === this.selectedUser.id &&
+            messageData['recipientId'] === this.global.currentUserData.id) ||
+          (this.global.statusCheck &&
+            messageData['senderId'] === this.global.currentUserData.id &&
+            messageData['recipientId'] === this.global.currentUserData.id)
+        ) {
+          this.messagesData.push({ id: doc.id, ...messageData });
+        }
+      });
+      this.subscribeToThreadAnswers();
+      this.messagesData.sort((a: any, b: any) => a.timestamp - b.timestamp);
+      this.checkForSelfChat();
+      if (this.shouldScroll) {
+        this.scrollAutoDown();
+      }
+    });
+  }
+  scrollAutoDown() {
+    throw new Error('Method not implemented.');
+  }
+  checkForSelfChat() {
+    throw new Error('Method not implemented.');
+  }
+  subscribeToThreadAnswers() {
+    throw new Error('Method not implemented.');
   }
 
   enterChatByUserName(user: any) {

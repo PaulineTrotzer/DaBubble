@@ -4,6 +4,8 @@
   gap: 32px;
   margin: 32px 0;
   position: relative;
+  max-height: 800px;
+  overflow: auto;
 }
 
 .img-container {
@@ -408,4 +410,11 @@ form {
       transform: scale(1.2);
     }
   }
+}
+
+app-input-field {
+  position: fixed;
+  background-color: white;
+  position: absolute;
+  bottom: 0;
 }
