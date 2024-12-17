@@ -89,6 +89,8 @@ export class WorkspaceComponent implements OnInit {
 
 selectUser(user: any) {
   this.userSelected.emit(user);
+  this.global.setSelectedUser(user)
+  this.global.currentChannel = null;
   this.id = user.id;
   this.global.currentThreadMessageSubject.next('');
   this.global.channelThreadSubject.next(null);
@@ -117,7 +119,8 @@ selectUser(user: any) {
 
 
            
-  selectCurrentUser() {
+  
+selectCurrentUser() {
     this.userSelected.emit(this.global.currentUserData);
     this.global.statusCheck = true;
   }
@@ -213,6 +216,7 @@ selectUser(user: any) {
   selectChannel(channel: any) {  
       this.selectedChannel = channel;
       this.global.channelSelected=true;
+      this.global.currentSelectedUser = null;
       this.channelSelected.emit(channel);
       this.global.currentThreadMessageSubject.next('');
       this.global.channelThreadSubject.next(null);

@@ -39,9 +39,7 @@
     </mat-card-header>
 
     <div *ngIf="!afterLoginSheet">
-      <app-chat-component (enterChatUser)="enterByUsername($event)" (threadOpened)="onThreadOpened()"
-        [onHeaderChannel]="onHeaderChannel" [selectedChannel]="selectedChannel" [onHeaderUser]="onHeaderUser"
-        (messageForwarded)="onMessageForwarded($event)" [selectedUser]="selectedUser"></app-chat-component>
+      <app-chat-component *ngIf="global.currentSelectedUser || global.currentChannel"></app-chat-component>
         
         <div class="members-container" *ngIf="global.channelSelected">
           <div class="member-avatars" (click)="openMemberDialog()">

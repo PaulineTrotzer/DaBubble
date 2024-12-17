@@ -12,6 +12,7 @@ export class GlobalVariableService {
   mentionpeopleName: any;
   channelSelected: boolean = false;
   currentChannel: any = null;
+  currentSelectedUser: any = null;
   welcomeChannel: boolean = false;
   openMentionMessageBox: boolean = false;
   getUserByName: any = {};
@@ -42,6 +43,7 @@ export class GlobalVariableService {
 
   setCurrentChannel(channel: any) {
     this.currentChannel = channel;
+    console.log(this.currentChannel)
     this.channelSelected = true;
     if (channel.name == 'Willkommen') {
       this.welcomeChannelSubject.next(true);
@@ -49,6 +51,11 @@ export class GlobalVariableService {
     } else {
       this.welcomeChannelSubject.next(false);
     }
+  }
+
+  setSelectedUser(user: any) {
+    this.currentSelectedUser = user;
+    console.log('Selected user from global..', this.currentSelectedUser)
   }
 
   getWelcomeChannel() {

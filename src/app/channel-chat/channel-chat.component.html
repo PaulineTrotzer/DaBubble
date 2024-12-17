@@ -30,7 +30,11 @@
         (emojiClick)="addEmojiToMessage($event.emoji.native, message.id)"
       ></emoji-mart>
     </div>
-    <div class="reaction-bar" *ngIf="hoveredMessageId === message.id && !showEditArea" @slideIn>
+    <div
+      class="reaction-bar"
+      *ngIf="hoveredMessageId === message.id && !showEditArea"
+      @slideIn
+    >
       <div class="used-emojis">
         <span
           *ngFor="let emoji of currentUserLastEmojis"
@@ -115,12 +119,14 @@
         </svg>
       </div>
       <div
-      class="message-edit"
-      *ngIf="showEditDialog === message.id && hoveredMessageId === showEditDialog"
-      (click)="toggleEditArea(message.id, message.text)"
-    >
-      <span>Nachricht bearbeiten</span>
-    </div>
+        class="message-edit"
+        *ngIf="
+          showEditDialog === message.id && hoveredMessageId === showEditDialog
+        "
+        (click)="toggleEditArea(message.id, message.text)"
+      >
+        <span>Nachricht bearbeiten</span>
+      </div>
     </div>
     <div class="message">
       <div class="message-content">
@@ -145,13 +151,18 @@
                     message.senderId === global.currentUserData.id
                 }"
               >
-               <span class="emoji-from">{{hoveredEmoji}}</span> <span class="reaction-text">{{ getReactionText(message, hoveredEmoji) }}</span>
+                <span class="emoji-from">{{ hoveredEmoji }}</span>
+                <span class="reaction-text">{{
+                  getReactionText(message, hoveredEmoji)
+                }}</span>
               </div>
               <span
                 *ngFor="let reaction of message.reactions | keyvalue"
                 class="reaction"
                 (mouseenter)="onReactionHover(message, reaction.key)"
-                (mouseleave)="hoveredReactionMessageId = null; hoveredEmoji = null"
+                (mouseleave)="
+                  hoveredReactionMessageId = null; hoveredEmoji = null
+                "
                 (click)="addEmojiToMessage(reaction.key, message.id)"
               >
                 {{ reaction.key }} {{ reaction.value.length }}
@@ -197,9 +208,11 @@
       </div>
     </div>
     <div class="edit-message-container" *ngIf="showEditArea === message.id">
-      
       <form>
-        <div class="img-container textarea" (click)="togglePicker(message.id, true)">
+        <div
+          class="img-container textarea"
+          (click)="togglePicker(message.id, true)"
+        >
           <svg
             width="25"
             height="24"
@@ -227,11 +240,7 @@
             </g>
           </svg>
         </div>
-        <textarea
-          name="message"
-          id="message"
-          [(ngModel)]="messageToEdit"
-        >
+        <textarea name="message" id="message" [(ngModel)]="messageToEdit">
  {{ message.text }} </textarea
         >
         <div class="button-row edit-message-button-row">
@@ -246,36 +255,40 @@
       <img [src]="message.senderPicture" />
     </div>
 
-      <div class="show-selected-files">
-        <div *ngFor="let file of message.selectedFiles">
-            
-          <div class="file-info" *ngIf="file.type.startsWith('image/')">
-            <a [href]="file.url" target="_blank">   
-             <img [src]="file.data" >   
-            </a> 
-         </div> 
-
-         <div class="file-info" *ngIf="file.type==='application/pdf'">
-          <a [href]="file.url" target="_blank"> 
-              <img src="../../assets/img/pdf.png"> 
+    <div class="show-selected-files">
+      <div *ngFor="let file of message.selectedFiles">
+        <div class="file-info" *ngIf="file.type.startsWith('image/')">
+          <a [href]="file.url" target="_blank">
+            <img [src]="file.data" />
           </a>
-      </div>  
+        </div>
 
-      <div class="file-info" *ngIf="file.type==='text/plain'">
-        <a [href]="file.url" target="_blank"> 
-            <img src="../../assets/img/textfile.png" > 
-        </a>
-    </div> 
+        <div class="file-info" *ngIf="file.type === 'application/pdf'">
+          <a [href]="file.url" target="_blank">
+            <img src="../../assets/img/pdf.png" />
+          </a>
+        </div>
 
-    <div  class="file-info" *ngIf="!file.type.startsWith('image/') && 
-      file.type !== 'application/pdf' && file.type!== 'text/plain'" >
-     <a [href]="file.url" target="_blank">
-      <img src="../../assets/img/alldatei.png"> 
-     </a>
-     </div>    
+        <div class="file-info" *ngIf="file.type === 'text/plain'">
+          <a [href]="file.url" target="_blank">
+            <img src="../../assets/img/textfile.png" />
+          </a>
+        </div>
 
+        <div
+          class="file-info"
+          *ngIf="
+            !file.type.startsWith('image/') &&
+            file.type !== 'application/pdf' &&
+            file.type !== 'text/plain'
+          "
+        >
+          <a [href]="file.url" target="_blank">
+            <img src="../../assets/img/alldatei.png" />
+          </a>
         </div>
       </div>
-
+    </div>
   </div>
+  <app-input-field></app-input-field>
 </div>

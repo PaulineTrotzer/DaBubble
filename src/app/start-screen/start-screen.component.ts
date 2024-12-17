@@ -44,10 +44,7 @@ interface ChannelData {
     MatButtonModule,
     CommonModule,
     FormsModule,
-    PeopleMentionComponent,
     DialogHeaderProfilCardComponent,
-    DialogEditChannelComponent,
-    DialogAddMemberComponent,
     ProfileContactCardComponent,
     ChatComponent,
     WelcomeSheetComponent,
@@ -71,7 +68,6 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   route = inject(ActivatedRoute);
   @Input() selectedUser: any;
   @Input() selectedChannel: any;
-
   @Input() mentionUser: string = '';
   @Input() onHeaderUser: any;
 

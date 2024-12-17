@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Overlay } from '@angular/cdk/overlay';
 import { OverlayStatusService } from '../services/overlay-status.service';
+import { InputFieldComponent } from '../input-field/input-field.component';
 
 interface Message {
   id: string;
@@ -34,7 +35,7 @@ interface Message {
 @Component({
   selector: 'app-channel-chat',
   standalone: true,
-  imports: [CommonModule, PickerComponent, FormsModule],
+  imports: [CommonModule, PickerComponent, FormsModule, InputFieldComponent],
   templateUrl: './channel-chat.component.html',
   styleUrl: './channel-chat.component.scss',
   animations: [
