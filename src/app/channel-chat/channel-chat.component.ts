@@ -14,9 +14,12 @@ import {
   DocumentReference,
   Firestore,
   getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
+  QuerySnapshot,
+  Unsubscribe,
   updateDoc,
 } from '@angular/fire/firestore';
 import { GlobalVariableService } from '../services/global-variable.service';
@@ -37,6 +40,7 @@ interface Message {
   senderPicture: string;
   reactions: { [emoji: string]: string[] };
   selectedFiles?: any[];
+  replyCount: number;
 }
 
 @Component({
@@ -75,6 +79,7 @@ export class ChannelChatComponent implements OnInit {
   global = inject(GlobalVariableService);
   overlay = inject(OverlayStatusService);
   messagesData: Message[] = [];
+  threadMessages: Message[] = [];
   showThreadInfo: boolean = false;
   showEditDialog: string | null = null;
   showEditArea: string | null = null;
@@ -188,27 +193,63 @@ export class ChannelChatComponent implements OnInit {
       console.warn('No channel selected');
       return;
     }
-
+  
     if (this.unsubscribe) {
       this.unsubscribe();
     }
-
+  
     const messagesRef = collection(
       this.firestore,
       'channels',
       this.selectedChannel.id,
       'messages'
     );
-
+  
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
-    onSnapshot(q, (querySnapshot: any) => {
-      this.messagesData = querySnapshot.docs.map((doc: any) => {
-        const data = doc.data();
-        if (data.timestamp && data.timestamp.seconds) {
-          data.timestamp = new Date(data.timestamp.seconds * 1000);
-        }
-        return { id: doc.id, ...data };
-      });
+  
+    // Store unsubscribes for subcollection listeners
+    const threadUnsubscribes: { [messageId: string]: Unsubscribe } = {};
+  
+    this.unsubscribe = onSnapshot(q, async (querySnapshot: any) => {
+      const messages = await Promise.all(
+        querySnapshot.docs.map(async (doc: any) => {
+          const data = doc.data();
+          if (data.timestamp && data.timestamp.seconds) {
+            data.timestamp = new Date(data.timestamp.seconds * 1000);
+          }
+  
+          const messageId = doc.id;
+  
+          // Set up a listener for the thread subcollection
+          const threadRef = collection(
+            this.firestore,
+            'channels',
+            this.selectedChannel.id,
+            'messages',
+            messageId,
+            'thread'
+          );
+  
+          if (threadUnsubscribes[messageId]) {
+            // Remove existing listener to prevent duplicates
+            threadUnsubscribes[messageId]();
+          }
+  
+          const threadUnsubscribe = onSnapshot(threadRef, (threadSnapshot: QuerySnapshot) => {
+            const messageIndex = this.messagesData.findIndex((m) => m.id === messageId);
+            if (messageIndex !== -1) {
+              this.messagesData[messageIndex].replyCount = threadSnapshot.size;
+            }
+          });
+  
+          // Store the unsubscribe function
+          threadUnsubscribes[messageId] = threadUnsubscribe;
+  
+          return { id: messageId, ...data, replyCount: 0 }; // Default reply count will be updated by the listener
+        })
+      );
+  
+      this.messagesData = messages;
     });
   }
 
@@ -380,46 +421,47 @@ export class ChannelChatComponent implements OnInit {
     return reactions && Object.keys(reactions).length > 0;
   }
 
-  openThread(messageId: string){
-    this.global.setChannelThread(messageId)
-    console.log(messageId) 
+  openThread(messageId: string) {
+    this.global.setChannelThread(messageId);
+    console.log(messageId);
     this.openvollThreadBox();
     this.hiddenFullChannelOrUserThreadBox();
-     this.checkWidthSize();
-     this.checkThreadOpen();
-  } 
- 
+    this.checkWidthSize();
+    this.checkThreadOpen();
+  }
 
-  checkThreadOpen(){
-    if(window.innerWidth<=750 && this.global.openChannelorUserBox ){
-      this.global.openChannelorUserBox=false
+  checkThreadOpen() {
+    if (window.innerWidth <= 750 && this.global.openChannelorUserBox) {
+      this.global.openChannelorUserBox = false;
     }
   }
 
-checkWidthSize(){
-  if(window.innerWidth<=750){
-     return this.global.openChannelOrUserThread=true 
-  }else{
-    return this.global.openChannelOrUserThread=false;    
+  checkWidthSize() {
+    if (window.innerWidth <= 750) {
+      return (this.global.openChannelOrUserThread = true);
+    } else {
+      return (this.global.openChannelOrUserThread = false);
+    }
   }
-}
- 
 
-openvollThreadBox() {
-  if(window.innerWidth<=1349 && window.innerWidth > 720){
-    return this.global.checkWideChannelOrUserThreadBox=true;
-  }else{
-    return this.global.checkWideChannelOrUserThreadBox=false;
+  openvollThreadBox() {
+    if (window.innerWidth <= 1349 && window.innerWidth > 720) {
+      return (this.global.checkWideChannelOrUserThreadBox = true);
+    } else {
+      return (this.global.checkWideChannelOrUserThreadBox = false);
+    }
   }
-} 
-  
-hiddenFullChannelOrUserThreadBox(){
-  if(window.innerWidth<=1349 && window.innerWidth > 720 && this.global.checkWideChannelorUserBox){
-    this.global.checkWideChannelorUserBox=false;
-  }
-}
 
-  
+  hiddenFullChannelOrUserThreadBox() {
+    if (
+      window.innerWidth <= 1349 &&
+      window.innerWidth > 720 &&
+      this.global.checkWideChannelorUserBox
+    ) {
+      this.global.checkWideChannelorUserBox = false;
+    }
+  }
+
   displayDayInfo(index: number): boolean {
     if (index === 0) return true;
     const currentMessage = this.messagesData[index];

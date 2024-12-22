@@ -30,6 +30,17 @@
   }
 }
 
+.thread-info-box {
+  font-family: Nunito;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24.55px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: #535AF1;
+}
+
 .message-from-user {
   display: flex;
   gap: 30px;

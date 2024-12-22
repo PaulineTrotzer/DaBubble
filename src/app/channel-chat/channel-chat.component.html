@@ -94,6 +94,10 @@
           </div>
 
           <div class="reaction-info">
+            <div class="thread-info-box" *ngIf="message.replyCount">
+              <p *ngIf="message.replyCount <= 1"> {{ message.replyCount }} Antwort</p>
+              <p *ngIf="message.replyCount > 1"> {{ message.replyCount }} Antworten</p>
+            </div>
             <div *ngIf="hoveredReactionMessageId === message.id && hoveredEmoji" class="reaction-from-container"
               [ngClass]="{
                   'reaction-on-user':
@@ -124,10 +128,6 @@
                   </g>
                 </svg>
               </div> -->
-          </div>
-
-          <div class="thread-info-box" *ngIf="showThreadInfo">
-            answers lastanswer
           </div>
         </div>
       </div>
