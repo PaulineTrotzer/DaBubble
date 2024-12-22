@@ -98,7 +98,7 @@
               <p *ngIf="message.replyCount <= 1"> {{ message.replyCount }} Antwort</p>
               <p *ngIf="message.replyCount > 1"> {{ message.replyCount }} Antworten</p>
             </div>
-            <div *ngIf="hoveredReactionMessageId === message.id && hoveredEmoji" class="reaction-from-container"
+            <div *ngIf="hasReactions(message.reactions) && hoveredReactionMessageId === message.id && hoveredEmoji" class="reaction-from-container"
               [ngClass]="{
                   'reaction-on-user':
                     message.senderId !== global.currentUserData.id,

@@ -261,7 +261,7 @@ export class ChannelChatComponent implements OnInit {
 
   togglePicker(messageId: string, isEditing: boolean = false) {
     this.isPickerVisible =
-      this.isPickerVisible === messageId ? null : messageId;
+    this.isPickerVisible === messageId ? null : messageId;
     this.editingMessageId = isEditing ? messageId : null; // Track editing mode
     this.overlay.setOverlayStatus(true);
   }
@@ -358,6 +358,8 @@ export class ChannelChatComponent implements OnInit {
         return;
       }
 
+      this.addLastUsedEmoji(emoji);
+
       const messageDocRef = doc(
         this.firestore,
         'channels',
@@ -407,8 +409,7 @@ export class ChannelChatComponent implements OnInit {
       });
     }
 
-    this.isPickerVisible = null;
-    this.overlay.setOverlayStatus(false);
+    this.closePicker();
   }
 
   closePicker() {

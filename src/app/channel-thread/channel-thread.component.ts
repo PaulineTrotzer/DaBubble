@@ -326,10 +326,10 @@ export class ChannelThreadComponent implements OnInit {
     return userData?.['lastEmojis'] || [];
   }
 
-  togglePicker(messageId: string) {
+  togglePicker(messageId: string, isEditing: boolean = false) {
     this.isPickerVisible =
-      this.isPickerVisible === messageId ? null : messageId;
-    this.editingMessageId = this.isPickerVisible ? messageId : null;
+    this.isPickerVisible === messageId ? null : messageId;
+    this.editingMessageId = isEditing ? messageId : null; // Track editing mode
     this.overlay.setOverlayStatus(true);
   }
 

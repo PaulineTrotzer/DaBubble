@@ -26,11 +26,12 @@
       (enterChatUser)="selectUserForChat($event)" (closeMentionBox)="closeMentionBoxHandler()">
     </app-mention-message-box>
 
+    
 
     <div class="topic-container" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false">
       <div class="edit-message-container" *ngIf="showEditArea === topicMessage?.id!">
         <form>
-          <div class="img-container textarea" (click)="togglePicker(topicMessage?.id!)">
+          <div class="img-container textarea" (click)="togglePicker(topicMessage?.id!, true)">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
               <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
                 height="24">
@@ -71,6 +72,10 @@
           'reaction-bar-user':
             topicMessage?.senderId !== global.currentUserData.id
         }">
+        <div class="emoji-container" *ngIf="isPickerVisible === topicMessage?.id!">
+          <emoji-mart [set]="'apple'" [emojiSize]="32"
+            (emojiClick)="addEmojiToMessage($event.emoji.native, topicMessage?.id!)"></emoji-mart>
+        </div>
         <div class="used-emojis">
           <span *ngFor="let emoji of currentUserLastEmojis" class="emoji"
             (click)="addEmojiToMessage(emoji, topicMessage?.id!)">
@@ -179,7 +184,7 @@
       *ngFor="let message of messages">
       <div class="edit-message-container" *ngIf="showEditArea === message.id">
         <form>
-          <div class="img-container textarea" (click)="togglePicker(message.id)">
+          <div class="img-container textarea" (click)="togglePicker(message.id, true)">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
               <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
                 height="24">
