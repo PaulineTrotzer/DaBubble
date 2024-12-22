@@ -65,11 +65,6 @@
         *ngIf="showEditDialog === topicMessage?.id!">
         <span>Nachricht bearbeiten</span>
       </div>
-      <div class="emoji-container" *ngIf="isPickerVisible === topicMessage?.id">
-        <emoji-mart [set]="'apple'" [emojiSize]="32" (emojiClick)="
-            addEmojiToMessage($event.emoji.native, topicMessage?.id!)
-          "></emoji-mart>
-      </div>
       <div @slideIn class="reaction-bar" *ngIf="hoveredTopic && !showEditArea" [ngClass]="{
           'reaction-bar-current':
             topicMessage?.senderId === global.currentUserData.id,

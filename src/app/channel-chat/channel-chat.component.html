@@ -94,7 +94,7 @@
           </div>
 
           <div class="reaction-info">
-            <div class="thread-info-box" *ngIf="message.replyCount">
+            <div class="thread-info-box" (click)="openThread(message.id)" *ngIf="message.replyCount">
               <p *ngIf="message.replyCount <= 1"> {{ message.replyCount }} Antwort</p>
               <p *ngIf="message.replyCount > 1"> {{ message.replyCount }} Antworten</p>
             </div>
