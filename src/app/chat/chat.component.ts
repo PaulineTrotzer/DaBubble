@@ -464,21 +464,22 @@ export class ChatComponent implements OnInit, OnChanges {
   }
 
   checkThreadOpen() {
-    if (window.innerWidth <= 750 && this.global.openChannelorUserBox) {
+    if (window.innerWidth <= 1200 && this.global.openChannelorUserBox) {
       this.global.openChannelorUserBox = false;
+
     }
   }
 
   checkWidthSize() {
-    if (window.innerWidth <= 750) {
-      return (this.global.openChannelOrUserThread = true);
+    if (window.innerWidth <= 1200) {
+      return this.global.openChannelOrUserThread = true;
     } else {
-      return (this.global.openChannelOrUserThread = false);
+      return this.global.openChannelOrUserThread = false;
     }
   }
 
   openvollThreadBox() {
-    if (window.innerWidth <= 1349 && window.innerWidth > 720) {
+    if (window.innerWidth <= 1349 && window.innerWidth > 1200) {
       return (this.global.checkWideChannelOrUserThreadBox = true);
     } else {
       return (this.global.checkWideChannelOrUserThreadBox = false);
@@ -488,7 +489,7 @@ export class ChatComponent implements OnInit, OnChanges {
   hiddenFullChannelOrUserThreadBox() {
     if (
       window.innerWidth <= 1349 &&
-      window.innerWidth > 720 &&
+      window.innerWidth > 1200 &&
       this.global.checkWideChannelorUserBox
     ) {
       this.global.checkWideChannelorUserBox = false;

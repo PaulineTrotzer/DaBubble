@@ -153,9 +153,9 @@ export class HomeComponent implements OnInit {
   }
 
   toggleWorkspace() {
-    if(window.innerWidth<=720 && this.global.openChannelorUserBox ){
+    if(window.innerWidth<=1200 && this.global.openChannelorUserBox ){
       this.global.openChannelorUserBox=false;
-    }else if(window.innerWidth<=720 && this.global.openChannelOrUserThread){
+    }else if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
       this.global.openChannelOrUserThread=false;
       this.isWorkspaceOpen=true;
     }
