@@ -8,7 +8,7 @@
           <span class="btn-text-img"># {{ selectedChannel?.name}} </span>
           <!-- <img src="./assets/img/arrow_drop_down.svg"/></span> -->
         </button>
-        <div (click)="showMyUserProfile()" class="user-chat-info" *ngIf="selectedUser || onHeaderUser ">
+        <div (click)="showMyUserProfile()" class="user-chat-info" *ngIf="(selectedUser || onHeaderUser) && !selectedChannel">
           <img [src]="
               global.statusCheck 
                 ? global.currentUserData.picture

@@ -250,75 +250,46 @@ export class ChannelThreadComponent implements OnInit {
       this.global.openChannelorUserBox=true
   } 
 
-  async addEmoji(event: any, messageId: string) {
-    const emoji = event.emoji;
-    this.isPickerVisible = null;
-    await this.addLastUsedEmoji(emoji);
-    await this.addToReactionInfo(emoji, messageId);
-  }
-
   async addLastUsedEmoji(emoji: any) {
     const auth = getAuth();
     const currentUserId = auth.currentUser?.uid;
-    if (currentUserId) {
-      const docRef = doc(this.db, 'users', currentUserId);
-      await updateDoc(docRef, {
-        lastEmojis: [
-          emoji.native,
-          ...(await this.getExistingEmojis(docRef)),
-        ].slice(0, 2),
-      });
+  
+    if (!currentUserId) {
+      console.warn('No current user logged in');
+      return;
     }
-  }
-
-  async addToReactionInfo(emoji: any, messageId: string) {
-    const auth = getAuth();
-    const currentUserId = auth.currentUser?.uid;
-
-    if (!currentUserId) return;
-
-    const messageDocRef =
-      messageId === this.topicMessage?.id
-        ? doc(
-            this.db,
-            'channels',
-            this.selectedChannel.id,
-            'messages',
-            messageId
-          )
-        : doc(
-            this.db,
-            'channels',
-            this.selectedChannel.id,
-            'messages',
-            this.channelMessageId,
-            'thread',
-            messageId
-          );
-
+  
+    const emojiNative = typeof emoji === 'string' ? emoji : emoji?.native;
+  
+    if (!emojiNative) {
+      console.error('Invalid emoji provided:', emoji);
+      return;
+    }
+  
+    const docRef = doc(this.firestore, 'users', currentUserId);
+  
     try {
-      const messageSnapshot = await getDoc(messageDocRef);
-      if (!messageSnapshot.exists()) return;
-
-      const messageData = messageSnapshot.data();
-      let reactions = messageData?.['reactions'] || {};
-
-      const hasReacted = Object.values(reactions).some((userIds) =>
-        (userIds as string[]).includes(currentUserId)
-      );
-
-      if (hasReacted) return;
-
-      if (!reactions[emoji.native]) {
-        reactions[emoji.native] = [];
+      const existingEmojis = await this.getExistingEmojis(docRef);
+  
+      if (!Array.isArray(existingEmojis)) {
+        console.warn('Unexpected data for last emojis:', existingEmojis);
+        return;
       }
-
-      reactions[emoji.native].push(currentUserId);
-      await updateDoc(messageDocRef, { reactions });
+  
+      const updatedEmojis = [emojiNative, ...existingEmojis].slice(0, 2);
+  
+      if (updatedEmojis.every((e) => typeof e === 'string')) {
+        await updateDoc(docRef, { lastEmojis: updatedEmojis });
+        console.log('Last emojis updated successfully:', updatedEmojis);
+      } else {
+        console.error('Invalid emojis array:', updatedEmojis);
+      }
     } catch (error) {
-      console.error('Error updating reactions:', error);
+      console.error('Error updating last emojis:', error);
     }
   }
+
+  
 
   async getExistingEmojis(userDocRef: DocumentReference): Promise<string[]> {
     const userDoc = await getDoc(userDocRef);
@@ -337,51 +308,7 @@ export class ChannelThreadComponent implements OnInit {
     this.overlay.setOverlayStatus(false);
   }
 
-  async removeReaction(emoji: string, messageId: string) {
-    const auth = getAuth();
-    const currentUserId = auth.currentUser?.uid;
-
-    if (!currentUserId) return;
-
-    const messageDocRef =
-      messageId === this.topicMessage?.id
-        ? doc(
-            this.db,
-            'channels',
-            this.selectedChannel.id,
-            'messages',
-            messageId
-          )
-        : doc(
-            this.db,
-            'channels',
-            this.selectedChannel.id,
-            'messages',
-            this.channelMessageId,
-            'thread',
-            messageId
-          );
-
-    try {
-      const messageSnapshot = await getDoc(messageDocRef);
-      const messageData = messageSnapshot.data();
-      const reactions = messageData?.['reactions'] || {};
-
-      if (reactions[emoji] && reactions[emoji].includes(currentUserId)) {
-        reactions[emoji] = reactions[emoji].filter(
-          (userId: string) => userId !== currentUserId
-        );
-
-        if (reactions[emoji].length === 0) {
-          delete reactions[emoji];
-        }
-
-        await updateDoc(messageDocRef, { reactions });
-      }
-    } catch (error) {
-      console.error('Error removing reaction:', error);
-    }
-  }
+  
 
   hasReactions(reactions: { [emoji: string]: string[] }): boolean {
     return reactions && Object.keys(reactions).length > 0;
@@ -431,6 +358,8 @@ export class ChannelThreadComponent implements OnInit {
               messageId
             );
 
+      this.addLastUsedEmoji(emoji)
+
       getDoc(messageDocRef).then((messageSnapshot) => {
         const messageData = messageSnapshot.data();
         const reactions = messageData?.['reactions'] || {};
@@ -473,13 +402,7 @@ export class ChannelThreadComponent implements OnInit {
 
     this.isPickerVisible = null;
     this.closePicker(); 
-  } 
- 
-
-
- 
-
-  
+  }   
    
    onReactionHover(message: Message, emoji: string) {
     this.hoveredReactionMessageId = message.id;

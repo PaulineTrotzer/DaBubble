@@ -269,14 +269,41 @@ export class ChannelChatComponent implements OnInit {
   async addLastUsedEmoji(emoji: any) {
     const auth = getAuth();
     const currentUserId = auth.currentUser?.uid;
-    if (currentUserId) {
-      const docRef = doc(this.firestore, 'users', currentUserId);
-      await updateDoc(docRef, {
-        lastEmojis: [
-          emoji.native,
-          ...(await this.getExistingEmojis(docRef)),
-        ].slice(0, 2),
-      });
+    
+    if (!currentUserId) {
+      console.warn('No current user logged in');
+      return;
+    }
+
+    // Handle both string emojis and emoji-mart events
+    const emojiNative = typeof emoji === 'string' ? emoji : emoji?.native;
+    
+    if (!emojiNative) {
+      console.error('Invalid emoji provided:', emoji);
+      return;
+    }
+
+    const docRef = doc(this.firestore, 'users', currentUserId);
+    
+    try {
+      const userDoc = await getDoc(docRef);
+      const userData = userDoc.data();
+      const existingEmojis = userData?.['lastEmojis'] || [];
+      
+      // Remove the emoji if it already exists to avoid duplicates
+      const filteredEmojis = existingEmojis.filter((e: any) => e !== emojiNative);
+      
+      // Add new emoji at the start and keep only the last 2
+      const updatedEmojis = [emojiNative, ...filteredEmojis].slice(0, 2);
+
+      // Update Firestore
+      await updateDoc(docRef, { lastEmojis: updatedEmojis });
+      
+      // Update local state immediately
+      this.currentUserLastEmojis = updatedEmojis;
+      
+    } catch (error) {
+      console.error('Error updating last emojis:', error);
     }
   }
 
@@ -301,46 +328,6 @@ export class ChannelChatComponent implements OnInit {
       });
     } else {
       console.warn('No current user logged in');
-    }
-  }
-
-  async removeReaction(emoji: string, messageId: string) {
-    const auth = getAuth();
-    const currentUserId = auth.currentUser?.uid;
-
-    if (!currentUserId) {
-      console.warn('No current user logged in');
-      return;
-    }
-
-    const messageDocRef = doc(
-      this.firestore,
-      'channels',
-      this.selectedChannel.id,
-      'messages',
-      messageId
-    );
-
-    try {
-      const messageSnapshot = await getDoc(messageDocRef);
-      const messageData = messageSnapshot.data();
-      const reactions = messageData?.['reactions'] || {};
-
-      if (reactions[emoji] && reactions[emoji].includes(currentUserId)) {
-        reactions[emoji] = reactions[emoji].filter(
-          (userId: string) => userId !== currentUserId
-        );
-
-        if (reactions[emoji].length === 0) {
-          delete reactions[emoji];
-        }
-
-        await updateDoc(messageDocRef, { reactions });
-
-        console.log(`Updated reactions for message ${messageId}:`, reactions);
-      }
-    } catch (error) {
-      console.error('Error removing reaction:', error);
     }
   }
 

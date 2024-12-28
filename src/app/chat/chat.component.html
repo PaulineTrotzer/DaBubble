@@ -392,9 +392,9 @@
                 </div>
             </div>
         </div>
-        <app-channel-chat (enterChatFromChannel)="enterChatByUserName($event)" *ngIf="global.channelSelected" [selectedChannel]="selectedChannel"></app-channel-chat>
+        <app-channel-chat (enterChatFromChannel)="enterChatByUserName($event)" *ngIf="selectedChannel" [selectedChannel]="selectedChannel"></app-channel-chat>
     </div>
-    <div class="self-chat-opener-ct" *ngIf="showWelcomeChatText ">
+    <div class="self-chat-opener-ct" *ngIf="showWelcomeChatText">
         <div class="self-name-and-img">
             <img class="self-chat-img" src={{selectedUser?.picture}}>
             <p>{{selectedUser?.name }}</p>
@@ -406,7 +406,7 @@
             gerne Dinge mit dir selbst besprechen.
         </span>
     </div>
-    <div class="two-chat-opener-ct" *ngIf="showTwoPersonConversationTxt">
+    <div class="two-chat-opener-ct" *ngIf="showTwoPersonConversationTxt && !selectedChannel">
         <div class="img-and-name">
             <img class="self-chat-img" src={{selectedUser?.picture}}>
             <p>{{selectedUser?.name}}</p>
