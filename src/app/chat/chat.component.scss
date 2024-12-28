@@ -14,6 +14,20 @@ app-input-field {
   margin-bottom: 52px;
 }
 
+.block-message {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito;
+  font-size: 48px;
+  color: rgba(0, 0, 0, 0.247);
+  p {
+    text-align: center;
+  }
+}
+
 .you {
   position: relative;
   left: -14px;
@@ -283,7 +297,6 @@ app-input-field {
   width: fit-content;
   overflow-wrap: break-word;
   max-height: max-content;
-
 }
 
 .card-content-current {
@@ -530,12 +543,7 @@ app-input-field {
       opacity: 1;
     }
   }
-
-
 }
-
-
-
 
 .edit-icon {
   width: 40px;
@@ -553,7 +561,7 @@ app-input-field {
   }
 }
 
-.edit-messages-card{
+.edit-messages-card {
   position: absolute;
   left: 25px;
   top: 22px;
@@ -609,7 +617,6 @@ app-input-field {
   font-family: Nunito, "Helvetica Neue";
   font-size: 18px;
   overflow-y: auto;
-  
 
   &:focus {
     border-color: #444df2;
@@ -627,7 +634,7 @@ app-input-field {
   gap: 11px;
   justify-content: flex-end;
   width: 86%;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 63px;
   gap: 10px;
 }
@@ -776,8 +783,7 @@ app-mention-message-box {
   right: 33%;
 }
 
-
-.show-selected-files{
+.show-selected-files {
   width: 100%;
   display: flex;
   align-items: center;
@@ -785,20 +791,17 @@ app-mention-message-box {
   flex-direction: column;
 }
 
-
-.file-info{
-  
-  img{
-     width: 100px;
-     height: 100px; 
+.file-info {
+  img {
+    width: 100px;
+    height: 100px;
   }
-  &:hover{
-    img{
+  &:hover {
+    img {
       transform: scale(1.2);
     }
   }
-} 
-
+}
 
 .emoji-at-ct {
   display: flex;
@@ -814,7 +817,8 @@ app-mention-message-box {
   img {
     &:hover {
       scale: 1.1;
-      filter: brightness(0) saturate(100%) invert(14%) sepia(70%) saturate(4200%) hue-rotate(210deg) brightness(93%) contrast(105%);
+      filter: brightness(0) saturate(100%) invert(14%) sepia(70%)
+        saturate(4200%) hue-rotate(210deg) brightness(93%) contrast(105%);
     }
   }
 }
@@ -839,56 +843,55 @@ app-mention-message-box {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.emoji-picker-user{
+.emoji-picker-user {
   position: absolute;
   z-index: 500;
   left: -340px;
-  top: 14px; 
-} 
+  top: 14px;
+}
 
-
-.comment-senderSticker-box{
+.comment-senderSticker-box {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 40px;
   height: 40px;
 
-  &:hover{
-     border-radius: 40px;
-      background-color: #eceefe;
-       cursor: pointer;  
+  &:hover {
+    border-radius: 40px;
+    background-color: #eceefe;
+    cursor: pointer;
   }
- } 
+}
 
- .comment-recipientSticker-box{
+.comment-recipientSticker-box {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 40px;
   height: 40px;
 
-  &:hover{
-     border-radius: 40px;
-      background-color: #eceefe;
-       cursor: pointer;  
+  &:hover {
+    border-radius: 40px;
+    background-color: #eceefe;
+    cursor: pointer;
   }
- }
+}
 
- .edit-emoji-main{
+.edit-emoji-main {
   position: relative;
   top: -52px;
   left: 1%;
   z-index: 40;
   width: 40px;
   height: 40px;
- } 
+}
 
- .emoji-picker-edit{
+.emoji-picker-edit {
   position: absolute;
   left: 37px;
   top: 5px;
- }
+}
 
 .thread-answer-display {
   display: flex;
@@ -900,7 +903,7 @@ app-mention-message-box {
   width: fit-content;
   height: 22px;
   cursor: pointer;
-  &:hover{
+  &:hover {
     transform: scale(1.1);
     color: #444df2;
   }
@@ -911,8 +914,7 @@ app-mention-message-box {
   pointer-events: all;
 }
 
-
-.edit-button{
+.edit-button {
   display: flex;
   gap: 32px;
 }

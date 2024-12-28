@@ -271,7 +271,9 @@ return  this.global.openChannelorUserBox = false;
     });
   }
 
-  selectChannel(channel: any) {
+  async selectChannel(channel: any) {
+    const isMember = await this.global.checkChannelMembership(channel, this.global.currentUserData.id);
+
     this.selectedUser = null;
     this.selectedChannel = channel;
     this.global.channelSelected = true;

@@ -23,10 +23,10 @@ export class GlobalVariableService {
   checkCountStatusUser:any
   currentRoom:any
   openChannelorUserBox:boolean=false;
-  openChannelOrUserThread:boolean=false;
- 
+  openChannelOrUserThread:boolean=false; 
   checkWideChannelorUserBox:boolean=false;
   checkWideChannelOrUserThreadBox:boolean=false;
+  isChannelMember: boolean = false;
 
   private welcomeChannelSubject = new BehaviorSubject<boolean>(false);
   welcomeChannel$ = this.welcomeChannelSubject.asObservable();
@@ -42,6 +42,20 @@ export class GlobalVariableService {
   async setCurrentUserData(userData: any) {
     this.currentUserData = userData;
     this.statusCheck = true;
+  }
+
+  async checkChannelMembership(channel: any, userId: string): Promise<boolean> {
+    if (!channel || !userId) {
+      this.isChannelMember = false;
+      return false;
+    }
+    if (channel.userIds && Array.isArray(channel.userIds)) {
+      this.isChannelMember = channel.userIds.includes(userId);
+      return this.isChannelMember;
+    }
+    
+    this.isChannelMember = false;
+    return false;
   }
 
   setCurrentChannel(channel: any) {
