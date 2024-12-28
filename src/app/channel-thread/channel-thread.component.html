@@ -28,10 +28,10 @@
 
     
 
-    <div class="topic-container" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false">
-      <div class="edit-message-container" *ngIf="showEditArea === topicMessage?.id!">
+    <div class="topic-container" *ngIf="topicMessage" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false">
+      <div class="edit-message-container" *ngIf="showEditArea === topicMessage.id">
         <form>
-          <div class="img-container textarea" (click)="togglePicker(topicMessage?.id!, true)">
+          <div class="img-container textarea" (click)="togglePicker(topicMessage.id, true)">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
               <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
                 height="24">
@@ -46,44 +46,44 @@
           </div>
 
           <textarea name="message" id="message" [(ngModel)]="messageToEdit">
-          {{ topicMessage?.text! }} </textarea>
+          {{ topicMessage.text }} </textarea>
 
           <div class="button-row edit-message-button-row">
             <!--             <button class="btn-secondary edit-button" (click)="cancelEdit()">
               Abbrechen
             </button> -->
             <img class="cancel-icon" (click)="cancelEdit()" src="assets/img/cross.svg" alt="Abbrechen">
-            <img class="save-icon" (click)="saveEditedMessage(topicMessage?.id!)" src="assets/img/check-mark.svg"
+            <img class="save-icon" (click)="saveEditedMessage(topicMessage.id)" src="assets/img/check-mark.svg"
               alt="Speichern">
             <!--             <button class="btn-primary edit-button" (click)="saveEditedMessage(topicMessage?.id!)">
               Speichern
             </button> -->
           </div>
         </form>
-        <img [src]="topicMessage?.senderPicture" />
+        <img [src]="topicMessage.senderPicture" />
       </div>
-      <div (click)="toggleEditArea(topicMessage?.id!, topicMessage?.text!)" class="message-edit-dialog"
+      <div (click)="toggleEditArea(topicMessage.id, topicMessage.text)" class="message-edit-dialog"
         *ngIf="showEditDialog === topicMessage?.id!">
         <span>Nachricht bearbeiten</span>
       </div>
-      <div class="emoji-container">
+      <div class="emoji-container" *ngIf="isPickerVisible === topicMessage.id">
         <emoji-mart [set]="'apple'" [emojiSize]="32"
-          (emojiClick)="addEmojiToMessage($event.emoji.native, topicMessage?.id!)">
+          (emojiClick)="addEmojiToMessage($event.emoji.native, topicMessage.id)">
         </emoji-mart>
       </div>
       <div @slideIn class="reaction-bar" *ngIf="hoveredTopic && !showEditArea" [ngClass]="{
           'reaction-bar-current':
-            topicMessage?.senderId === global.currentUserData.id,
+            topicMessage.senderId === global.currentUserData.id,
           'reaction-bar-user':
-            topicMessage?.senderId !== global.currentUserData.id
+            topicMessage.senderId !== global.currentUserData.id
         }">
         <div class="used-emojis">
           <span *ngFor="let emoji of currentUserLastEmojis" class="emoji"
-            (click)="addEmojiToMessage(emoji, topicMessage?.id!)">
+            (click)="addEmojiToMessage(emoji, topicMessage.id)">
             {{ emoji }}
           </span>
         </div>
-        <div class="img-container" (click)="togglePicker(topicMessage?.id!)">
+        <div class="img-container" (click)="togglePicker(topicMessage.id, false)">
           <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
             <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
               height="24">
@@ -96,8 +96,8 @@
             </g>
           </svg>
         </div>
-        <div (click)="toggleEditDialog(topicMessage?.id!)" class="img-container"
-          *ngIf="topicMessage?.senderId === global.currentUserData.id">
+        <div (click)="toggleEditDialog(topicMessage.id)" class="img-container"
+          *ngIf="topicMessage.senderId === global.currentUserData.id">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"
             class="icon">
             <path
@@ -107,29 +107,29 @@
       </div>
       <div class="topic" [ngClass]="{
           'topic-from-current':
-            topicMessage?.senderId === global.currentUserData.id,
+            topicMessage.senderId === global.currentUserData.id,
           'topic-from-user':
-            topicMessage?.senderId !== global.currentUserData.id
+            topicMessage.senderId !== global.currentUserData.id
         }">
         <div class="avatar-container">
-          <img [src]="topicMessage?.senderPicture" />
+          <img [src]="topicMessage.senderPicture" />
         </div>
         <div class="topic-content">
           <div class="sender-info" [ngClass]="{
-              'reverse': topicMessage?.senderId === global.currentUserData.id
+              'reverse': topicMessage.senderId === global.currentUserData.id
             }">
-            <h3>{{ topicMessage?.senderName }}</h3>
+            <h3>{{ topicMessage.senderName }}</h3>
             <p class="time">
-              {{ topicMessage?.timestamp | date : "HH:mm" }} Uhr
+              {{ topicMessage.timestamp | date : "HH:mm" }} Uhr
             </p>
           </div>
           <p class="message" [ngClass]="{
               'from-current':
-                topicMessage?.senderId === global.currentUserData.id,
-              'from-user': topicMessage?.senderId !== global.currentUserData.id
+                topicMessage.senderId === global.currentUserData.id,
+              'from-user': topicMessage.senderId !== global.currentUserData.id
             }">
             <!--        {{ topicMessage?.text }} -->
-            <ng-container *ngFor="let mentionName of splitMessage(topicMessage?.text || '')">
+            <ng-container *ngFor="let mentionName of splitMessage(topicMessage.text || '')">
               <span *ngIf="isMention(mentionName)" [ngClass]="'mention-message'"
                 (click)="handleMentionClick(mentionName)">
                 {{ mentionName }}
@@ -141,20 +141,20 @@
 
           </p>
           <div class="reaction-info" [ngClass]="{
-              'flex-end': topicMessage?.senderId === global.currentUserData.id
+              'flex-end': topicMessage.senderId === global.currentUserData.id
             }">
             <div class="reaction-from-container" *ngIf="
-                hoveredReactionMessageId === topicMessage?.id && hoveredEmoji
+                hoveredReactionMessageId === topicMessage.id && hoveredEmoji
               ">
               <span class="emoji-from"> {{ hoveredEmoji }} </span>
               <p class="reaction-text">
                 {{ getReactionText(topicMessage!, hoveredEmoji) }}
               </p>
             </div>
-            <span *ngFor="let reaction of topicMessage?.reactions | keyvalue" class="reaction"
+            <span *ngFor="let reaction of topicMessage.reactions | keyvalue" class="reaction"
               (mouseenter)="onReactionHover(topicMessage!, reaction.key)" (mouseleave)="
                 hoveredReactionMessageId = null; hoveredEmoji = null
-              " (click)="addEmojiToMessage(reaction.key, topicMessage?.id!)">
+              " (click)="addEmojiToMessage(reaction.key, topicMessage.id)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
             <!--             <div class="img-container" *ngIf="hasReactions(topicMessage?.reactions!)"
@@ -234,7 +234,7 @@
             {{ emoji }}
           </span>
         </div>
-        <div class="img-container" (click)="togglePicker(message.id)">
+        <div class="img-container" (click)="togglePicker(message.id, false)">
           <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
             <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
               height="24">
