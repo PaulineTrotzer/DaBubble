@@ -72,7 +72,6 @@ interface Message {
 export class ChannelThreadComponent implements OnInit {
   channelMessageId: any;
   @Input() selectedChannel: any;
-  firestore = inject(Firestore);
   db = inject(Firestore);
   global = inject(GlobalVariableService);
   auth = inject(AuthService);
@@ -101,20 +100,20 @@ export class ChannelThreadComponent implements OnInit {
   constructor() {}
 
   async ngOnInit(): Promise<void> {
-    this.global.channelThread$.subscribe(async (threadId) => {
+    this.global.channelThread$.subscribe((threadId) => {
       if (threadId) {
         this.channelMessageId = threadId;
-        await this.getTopic();
-        await this.loadThreadMessages();
+        this.getTopic();
+        this.loadThreadMessages();
         this.toggleChannelThread(true);
-        await this.loadCurrentUserEmojis();
-        await this.getAllUsersname();
+        this.loadCurrentUserEmojis();
+        this.getAllUsersname();
       }
     });
   }
 
   async getAllUsersname() {
-    const userRef = collection(this.firestore, 'users');
+    const userRef = collection(this.db, 'users');
     onSnapshot(userRef, (querySnapshot) => {
       this.getAllUsersName = [];
       querySnapshot.forEach((doc) => {
@@ -141,7 +140,7 @@ export class ChannelThreadComponent implements OnInit {
   async handleMentionClick(mention: string) {
     this.wasClickedInChannelThread = true;
     const cleanName = mention.substring(1);
-    const userRef = collection(this.firestore, 'users');
+    const userRef = collection(this.db, 'users');
     onSnapshot(userRef, (querySnapshot) => {
       this.global.getUserByName = {};
       querySnapshot.forEach((doc) => {
@@ -266,7 +265,7 @@ export class ChannelThreadComponent implements OnInit {
       return;
     }
   
-    const docRef = doc(this.firestore, 'users', currentUserId);
+    const docRef = doc(this.db, 'users', currentUserId);
   
     try {
       const existingEmojis = await this.getExistingEmojis(docRef);
@@ -306,6 +305,8 @@ export class ChannelThreadComponent implements OnInit {
 
   closePicker() {
     this.overlay.setOverlayStatus(false);
+    this.isPickerVisible = null;
+    this.editingMessageId = null;
   }
 
   
@@ -399,8 +400,6 @@ export class ChannelThreadComponent implements OnInit {
         updateDoc(messageDocRef, { reactions });
       });
     }
-
-    this.isPickerVisible = null;
     this.closePicker(); 
   }   
    

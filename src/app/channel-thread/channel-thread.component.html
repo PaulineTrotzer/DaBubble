@@ -66,16 +66,17 @@
         *ngIf="showEditDialog === topicMessage?.id!">
         <span>Nachricht bearbeiten</span>
       </div>
+      <div class="emoji-container">
+        <emoji-mart [set]="'apple'" [emojiSize]="32"
+          (emojiClick)="addEmojiToMessage($event.emoji.native, topicMessage?.id!)">
+        </emoji-mart>
+      </div>
       <div @slideIn class="reaction-bar" *ngIf="hoveredTopic && !showEditArea" [ngClass]="{
           'reaction-bar-current':
             topicMessage?.senderId === global.currentUserData.id,
           'reaction-bar-user':
             topicMessage?.senderId !== global.currentUserData.id
         }">
-        <div class="emoji-container" *ngIf="isPickerVisible === topicMessage?.id!">
-          <emoji-mart [set]="'apple'" [emojiSize]="32"
-            (emojiClick)="addEmojiToMessage($event.emoji.native, topicMessage?.id!)"></emoji-mart>
-        </div>
         <div class="used-emojis">
           <span *ngFor="let emoji of currentUserLastEmojis" class="emoji"
             (click)="addEmojiToMessage(emoji, topicMessage?.id!)">
@@ -115,7 +116,7 @@
         </div>
         <div class="topic-content">
           <div class="sender-info" [ngClass]="{
-              reverse: topicMessage?.senderId === global.currentUserData.id
+              'reverse': topicMessage?.senderId === global.currentUserData.id
             }">
             <h3>{{ topicMessage?.senderName }}</h3>
             <p class="time">
@@ -219,7 +220,8 @@
       </div>
       <div class="emoji-container" *ngIf="isPickerVisible === message.id">
         <emoji-mart [set]="'apple'" [emojiSize]="32"
-          (emojiClick)="addEmojiToMessage($event.emoji.native, message.id)"></emoji-mart>
+          (emojiClick)="addEmojiToMessage($event.emoji.native, message.id)">
+        </emoji-mart>
       </div>
       <div @slideIn class="reaction-bar" *ngIf="hoveredMessageId === message.id && !showEditArea" [ngClass]="{
           'reaction-bar-current':
@@ -263,7 +265,7 @@
         </div>
         <div class="answer-content">
           <div class="sender-info" [ngClass]="{
-              reverse: message.senderId === global.currentUserData.id
+              'reverse': message.senderId === global.currentUserData.id
             }">
             <h3>{{ message.senderName }}</h3>
             <p class="time">{{ message.timestamp | date : "HH:mm" }} Uhr</p>
