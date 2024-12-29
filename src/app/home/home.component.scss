@@ -143,18 +143,16 @@ app-start-screen{
   width: 98%;
 }  
  
-@media(max-width:1349px){ 
+@media(max-width:1900px){ 
   .full-page-content.reset-gap{
   gap: 16px;
   } 
-
-   
 
   app-start-screen.hiddenFullWidth{
     width: 0;
     overflow-x: hidden;
     transition: all 175ms ease-in-out;
-     gap: unset;
+    gap: unset;
   } 
   
   app-start-screen.display-show{
@@ -172,12 +170,15 @@ app-start-screen{
 }
    
 
-
-
 @media(max-width:1200px){
   app-start-screen{
     display: none;
   } 
+   
+  app-start-screen.hiddenFullWidth{
+    width: 100%;
+  }
+  
 
   .full-page-content{
     gap:0;
@@ -217,5 +218,12 @@ app-start-screen{
    .thread-hidden{
     display: none;
    }
- 
+
+
+  //  app-start-screen.display-show{
+  //   display: none;
+  //   width: 0;
+  //   transition: all 175ms ease-in-out;
+  // }
+   
 }

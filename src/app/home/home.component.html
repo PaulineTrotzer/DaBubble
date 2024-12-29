@@ -7,17 +7,18 @@
 
             'workspace-open': isWorkspaceOpen,
             'workspace-closed':!isWorkspaceOpen,
-            'close-box':global.openChannelorUserBox || global.openChannelOrUserThread ,
-            'open-box':!global.openChannelorUserBox && !global.openChannelOrUserThread,
+            'close-box':global.openChannelorUserBox || global.openChannelOrUserThread  ,
+            'open-box':!global.openChannelorUserBox && !global.openChannelOrUserThread  ,
 
         }" (userSelected)="onUserSelected($event)" (channelSelected)="onChannelSelected($event)"
             [selectedUserHome]="selectedUser" [selectedChannelHome]="selectedChannel"></app-workspace>
 
         <app-start-screen
-          [ngClass]="{ 'display-show':global.checkWideChannelorUserBox,
-            'hiddenFullWidth':global.checkWideChannelOrUserThreadBox,
-             'startScreen-open':global.openChannelorUserBox || !isWorkspaceOpen,
-              'hidden':global.openChannelOrUserThread}" 
+          [ngClass]="{'display-show':global.checkWideChannelorUserBox,
+              'hiddenFullWidth':global.checkWideChannelOrUserThreadBox,
+              'startScreen-open':global.openChannelorUserBox || !isWorkspaceOpen,
+              'hidden':global.openChannelOrUserThread
+                      }" 
         (userSelectedFromStartscreen)="handleUserSelectionFromStartscreen($event)"
             (channelSelectedFromStartscreen)="handleChannelSelectionFromStartscreen($event)"
             (userSelected)="onUserSelected($event)" [onHeaderChannel]="onHeaderChannel" [onHeaderUser]="onHeaderUser"

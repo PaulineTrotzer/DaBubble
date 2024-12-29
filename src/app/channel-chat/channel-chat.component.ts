@@ -391,13 +391,13 @@ export class ChannelChatComponent implements OnInit {
  
 
   checkThreadOpen(){
-    if(window.innerWidth<=750 && this.global.openChannelorUserBox ){
+    if(window.innerWidth<=1200 && this.global.openChannelorUserBox ){
       this.global.openChannelorUserBox=false
     }
   }
 
 checkWidthSize(){
-  if(window.innerWidth<=750){
+  if(window.innerWidth<=1200){
      return this.global.openChannelOrUserThread=true 
   }else{
     return this.global.openChannelOrUserThread=false;    
@@ -406,7 +406,7 @@ checkWidthSize(){
  
 
 openvollThreadBox() {
-  if(window.innerWidth<=1349 && window.innerWidth > 720){
+  if(window.innerWidth<=1900 && window.innerWidth > 1200){
     return this.global.checkWideChannelOrUserThreadBox=true;
   }else{
     return this.global.checkWideChannelOrUserThreadBox=false;
@@ -414,7 +414,7 @@ openvollThreadBox() {
 } 
   
 hiddenFullChannelOrUserThreadBox(){
-  if(window.innerWidth<=1349 && window.innerWidth > 720 && this.global.checkWideChannelorUserBox){
+  if(window.innerWidth<=1900 && window.innerWidth > 1200 && this.global.checkWideChannelorUserBox){
     this.global.checkWideChannelorUserBox=false;
   }
 }

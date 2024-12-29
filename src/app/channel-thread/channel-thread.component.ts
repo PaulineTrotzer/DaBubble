@@ -234,21 +234,32 @@ export class ChannelThreadComponent implements OnInit {
 
   closeThread() {
     this.global.channelThreadSubject.next(null);
+    this.closeThreadResponsive();
     this.hiddenThreadFullBox();
     this.checkResponsiveWidtSize();
-  } 
+  }  
+
+  
 
   hiddenThreadFullBox(){
-    if(window.innerWidth<=1349 && window.innerWidth > 720 &&  this.global.checkWideChannelOrUserThreadBox){
+    if(window.innerWidth<=1900 && window.innerWidth > 1200 &&  this.global.checkWideChannelOrUserThreadBox){
       this.global.checkWideChannelOrUserThreadBox=false;
       this.global.checkWideChannelorUserBox=true;
     }
   }
   checkResponsiveWidtSize(){
-    if(window.innerWidth<=720 && this.global.openChannelOrUserThread)
+    if(window.innerWidth<=1200 && this.global.openChannelOrUserThread)
       this.global.openChannelOrUserThread=false
       this.global.openChannelorUserBox=true
-  } 
+  }  
+
+  closeThreadResponsive():void{
+    if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
+      this.global.openChannelOrUserThread=false;
+      this.global.openChannelorUserBox=true;
+    }
+    } 
+
 
   async addEmoji(event: any, messageId: string) {
     const emoji = event.emoji;
