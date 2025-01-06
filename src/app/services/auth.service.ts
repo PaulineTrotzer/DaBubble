@@ -36,6 +36,7 @@ export class AuthService {
   global = inject(GlobalService);
   loggedOut = false;
   globalVariable = inject(GlobalVariableService);
+  isGuest = false;
 
   constructor() {
     this.initAuthListener();
@@ -183,6 +184,7 @@ export class AuthService {
     } catch (error) {
       console.error('Error during anonymous sign-in:', error);
     }
+    this.isGuest = true;
   }
 
   async findUserByMail(identifier: string) {

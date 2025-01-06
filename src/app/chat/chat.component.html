@@ -1,11 +1,11 @@
 <div class="full-app-content">
-    <div class="block-message" *ngIf="selectedChannel && !global.isChannelMember && selectedChannel.name !== 'Willkommen'">
+    <div class="block-message" *ngIf="selectedChannel && !auth.isGuest && !global.isChannelMember && selectedChannel.name !== 'Willkommen'">
       <p>Du bist kein Mitglied dieses Kanals!</p>
     </div>
 
 
 
-    <div class="chat-content" *ngIf="!selectedChannel || global.isChannelMember || selectedChannel.name === 'Willkommen'">
+    <div class="chat-content" *ngIf="!selectedChannel || auth.isGuest || global.isChannelMember || selectedChannel.name === 'Willkommen'">
 
       <app-mention-message-box    (closeMentionBox)="onCancelMessageBox()" *ngIf="wasClickedChatInput" (enterChatUser)="enterChatByUserName($event)">
       </app-mention-message-box>

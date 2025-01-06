@@ -31,6 +31,7 @@ import { ChatComponent } from '../chat/chat.component';
 import { WelcomeSheetComponent } from '../welcome-sheet/welcome-sheet.component';
 import { Subscription } from 'rxjs';
 import { LoginAuthService } from '../services/login-auth.service';
+import { AuthService } from '../services/auth.service';
 
 interface ChannelData {
   userIds: string[];
@@ -69,6 +70,7 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   firestore = inject(Firestore);
   userId: any | null = null;
   route = inject(ActivatedRoute);
+  auth = inject(AuthService)
   @Input() selectedUser: any;
   @Input() selectedChannel: any;
   @Input() mentionUser: string = '';

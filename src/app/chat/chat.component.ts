@@ -39,6 +39,7 @@ import { MentionMessageBoxComponent } from '../mention-message-box/mention-messa
 import { ThreadControlService } from '../services/thread-control.service';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { OverlayStatusService } from '../services/overlay-status.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-chat-component',
@@ -68,6 +69,7 @@ export class ChatComponent implements OnInit, OnChanges {
   @Input() onHeaderUser: any;
   @Input() onHeaderChannel: any;
   messagesData: any[] = [];
+  auth = inject(AuthService)
   elementRef = inject(ElementRef);
   firestore = inject(Firestore);
   userservice = inject(UserService);

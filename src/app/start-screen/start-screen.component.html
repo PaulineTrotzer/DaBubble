@@ -1,7 +1,7 @@
 <div class="full-page-content">
   <mat-card class="big-chat-card" appearance="outlined">
     <div class="welcome-sheet" *ngIf="afterLoginSheet"><app-welcome-sheet></app-welcome-sheet></div>
-    <mat-card-header class="header" *ngIf="global.isChannelMember">
+    <mat-card-header class="header" *ngIf="global.isChannelMember || auth.isGuest">
 
       <div *ngIf="!afterLoginSheet" class="drop-down-div">
         <button *ngIf="selectedChannel || onHeaderChannel" class="drop-down-button" mat-button (click)="openDialog()">
@@ -42,7 +42,7 @@
       <app-chat-component (enterChatUser)="enterByUsername($event)" (threadOpened)="onThreadOpened()"
         [onHeaderChannel]="onHeaderChannel" [selectedChannel]="selectedChannel" [onHeaderUser]="onHeaderUser"
         (messageForwarded)="onMessageForwarded($event)" [selectedUser]="selectedUser"></app-chat-component>
-        <div class="members-container" *ngIf="global.channelSelected && global.isChannelMember">
+        <div class="members-container" *ngIf="(global.channelSelected && global.isChannelMember) || auth.isGuest">
           <div class="member-avatars" (click)="openMemberDialog()">
             <div class="avatar-container">
               <img class="avatar" *ngFor="let member of channelMembers.slice(0, 3)" [src]="member.picture" />
