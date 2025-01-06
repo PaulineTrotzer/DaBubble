@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  ElementRef,
   EventEmitter,
   inject,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import {
   collection,
@@ -97,6 +99,8 @@ export class ChannelChatComponent implements OnInit {
   @Output() enterChatFromChannel = new EventEmitter<any>();
   globalService = inject(GlobalVariableService);
   @Output() headerUpdate: EventEmitter<any> = new EventEmitter<any>();
+  shouldScrollDown = true;
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   constructor() {}
 
@@ -105,6 +109,19 @@ export class ChannelChatComponent implements OnInit {
     await this.loadCurrentUserEmojis();
     await this.getAllUsersname();
     await this.loadUserNames();
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop =
+        this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.warn('Could not scroll to bottom:', err);
+    }
   }
 
   onCancelMessageBox(): void {
@@ -250,6 +267,9 @@ export class ChannelChatComponent implements OnInit {
       );
   
       this.messagesData = messages;
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 250);
     });
   }
 

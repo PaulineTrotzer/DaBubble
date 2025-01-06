@@ -4,6 +4,8 @@
   gap: 32px;
   margin: 32px 0;
   position: relative;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .mention-message {
@@ -85,6 +87,7 @@
   }
   .reaction-bar {
     position: absolute;
+    z-index: 25;
     top: -20px;
     cursor: pointer;
     right: 48px;

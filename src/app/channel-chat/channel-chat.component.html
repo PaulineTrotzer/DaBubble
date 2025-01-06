@@ -1,4 +1,4 @@
-<div class="chat-box">
+<div class="chat-box" #scrollContainer>
 
   <app-mention-message-box (cancelMessageBoxCard)="onCancelMessageBox()"  *ngIf="wasClickedInChannelInput"
     (enterChatUser)="enterChatByUserName($event)"   (closeMentionBox)="closeMentionBoxHandler()" >
