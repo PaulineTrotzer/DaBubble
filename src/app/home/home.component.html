@@ -4,14 +4,17 @@
         <div class="main-content">
     <div [ngClass]="{'reset-gap':global.checkWideChannelOrUserThreadBox}"  class="full-page-content">
         <app-workspace [ngClass]="{
-
-            'workspace-open': isWorkspaceOpen,
-            'workspace-closed':!isWorkspaceOpen,
+            'workspace-open': isWorkspaceOpen ,
+            'workspace-closed':!isWorkspaceOpen ,
             'close-box':global.openChannelorUserBox || global.openChannelOrUserThread  ,
             'open-box':!global.openChannelorUserBox && !global.openChannelOrUserThread  ,
-
         }" (userSelected)="onUserSelected($event)" (channelSelected)="onChannelSelected($event)"
-            [selectedUserHome]="selectedUser" [selectedChannelHome]="selectedChannel"></app-workspace>
+                       [selectedUserHome]="selectedUser" [selectedChannelHome]="selectedChannel">
+                
+                    
+        
+        
+        </app-workspace>
 
         <app-start-screen
           [ngClass]="{'display-show':global.checkWideChannelorUserBox,
