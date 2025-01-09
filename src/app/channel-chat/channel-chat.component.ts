@@ -124,6 +124,9 @@ export class ChannelChatComponent implements OnInit {
         console.warn('Could not scroll to bottom:', err);
       }
     }
+    setTimeout(() => {
+      this.shouldScrollDown = false;
+    }, 500)
   }
 
   onCancelMessageBox(): void {

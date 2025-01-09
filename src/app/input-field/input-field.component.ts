@@ -196,6 +196,8 @@ export class InputFieldComponent implements OnInit, OnChanges {
         selectedFiles: this.selectFiles,
       };
       await addDoc(threadRef, messageData);
+      this.resetInputdata();
+      this.messageSent.emit();
     } catch (err) {
       console.error(err);
     }

@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="thread">
+  <div class="thread" #scrollContainer>
     <header>
       <div class="left">
         <h2>Thread</h2>
@@ -319,5 +319,5 @@
       </div>
     </div>
   </div>
-  <app-input-field [isChannelThreadOpen]="isChannelThreadOpen"></app-input-field>
+  <app-input-field (messageSent)="onMessageSent()" [isChannelThreadOpen]="isChannelThreadOpen"></app-input-field>
 </div>

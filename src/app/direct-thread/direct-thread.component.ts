@@ -457,7 +457,6 @@ export class DirectThreadComponent implements OnInit {
           )}, currentUserData = ${JSON.stringify(this.global.currentUserData)}`
         );
       } */
-      debugger;
       const messageData = {
         senderId: threadMessageData.senderId,
         senderName: threadMessageData.senderName,

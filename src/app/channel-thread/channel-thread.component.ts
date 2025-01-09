@@ -1,10 +1,12 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   inject,
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import {
   collection,
@@ -96,6 +98,8 @@ export class ChannelThreadComponent implements OnInit {
   @Output() enterChatUser = new EventEmitter<any>();
   wasClickedInChannelThread = false;
   getAllUsersName: any[] = [];
+  shouldScrollDown = true;
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   constructor() {}
 
@@ -110,6 +114,26 @@ export class ChannelThreadComponent implements OnInit {
         this.getAllUsersname();
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    if(this.shouldScrollDown){
+      try {
+        this.scrollContainer.nativeElement.scrollTop =
+          this.scrollContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.warn('Could not scroll to bottom:', err);
+      }
+    }
+  }
+  onMessageSent() {
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 250);
   }
 
   async getAllUsersname() {
@@ -229,6 +253,9 @@ export class ChannelThreadComponent implements OnInit {
         return { id: doc.id, ...data };
       });
     });
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 250);
   }
 
   closeThread() {
