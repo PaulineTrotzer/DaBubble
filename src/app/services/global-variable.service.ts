@@ -28,6 +28,15 @@ export class GlobalVariableService {
   checkWideChannelOrUserThreadBox:boolean=false;
   isChannelMember: boolean = false;
 
+
+  
+  selectedFilesChat:boolean=false; 
+  selectedFilesChannel:boolean=false; 
+  
+  
+   
+
+
   private welcomeChannelSubject = new BehaviorSubject<boolean>(false);
   welcomeChannel$ = this.welcomeChannelSubject.asObservable();
 

@@ -458,7 +458,6 @@ export class ChatComponent implements OnInit, OnChanges {
     } catch (error) {
       console.error('Fehler beim Öffnen des Threads:', error);
     }
-
     this.openvollThreadBox();
     this.hiddenFullChannelOrUserThreadBox();
     this.checkWidthSize();

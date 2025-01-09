@@ -83,7 +83,11 @@ export class InputFieldComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedUser'] && this.selectedUser?.id) {
-    }
+      this.selectFiles=[];
+    } 
+    if (changes['selectedChannel'] && this.selectedChannel?.id) {
+      this.selectFiles=[];
+    }  
   }
 
   ngOnInit(): void {
@@ -500,9 +504,24 @@ export class InputFieldComponent implements OnInit, OnChanges {
   //   const ids = [this.global.currentUserData?.id, this.selectedUser?.id];
   //   ids.sort();
   //   return ids.join('_');
-  // }
+  // } 
+      
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event: Event): void {
+  //   // this.global.selectedFilesChat=false; 
+  //   // this.global.selectedFilesChannel=false; 
 
-  onFileSelected(event: Event) {
+  //     if(!this.global.selectedFilesChannel && this.global.selectedFilesChat){
+  //           console.log('Du ur eir vor menq anum einq')
+  //     }
+
+
+
+  // }
+   
+   
+
+  onFileSelected(event: Event) { 
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       Array.from(input.files).forEach((file) => {
@@ -518,8 +537,11 @@ export class InputFieldComponent implements OnInit, OnChanges {
         reader.readAsDataURL(file);
       });
       input.value = '';
-    }
-  }
+    } 
+  }   
+
+
+      
 
   deleteFile(index: number) {
     this.selectFiles.splice(index, 1);

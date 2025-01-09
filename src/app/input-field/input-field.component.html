@@ -9,10 +9,10 @@
   </div>
 
 
-  <div class="show-selected-files">
+  <div  class="show-selected-files">
     <div *ngFor="let file of selectFiles; let i=index">
 
-      <div class="file-info" *ngIf="file.type.startsWith('image/')">
+      <div  class="file-info" *ngIf="file.type.startsWith('image/')">
         <div class="file-box">
           <img [src]="file.data">
           <div class="delet-box" (click)="deleteFile(i)">
