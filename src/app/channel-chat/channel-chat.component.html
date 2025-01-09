@@ -164,7 +164,7 @@
 
     <div class="show-selected-files">
       <div *ngFor="let file of message.selectedFiles">
-
+        
         <div class="file-info" *ngIf="file.type.startsWith('image/')">
           <a [href]="file.url" target="_blank">
             <img [src]="file.data">
