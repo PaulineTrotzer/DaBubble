@@ -1,49 +1,29 @@
-<div [ngClass]="{ 'page-content-plus-header': successfullyLogged }">
-  <app-header
-    (headerChannelSelcted)="onHeaderchannelSelected($event)"
-    (headerUserSelected)="onHeaderUserSelected($event)"
-  ></app-header>
-  <div class="main-content">
-    <div
-      [ngClass]="{ 'reset-gap': global.checkWideChannelOrUserThreadBox }"
-      class="full-page-content"
-    >
-      <app-workspace
-        [ngClass]="{
+<div [ngClass]="{'page-content-plus-header': successfullyLogged}">
+    <app-header (headerChannelSelcted)="onHeaderchannelSelected($event)"
+        (headerUserSelected)="onHeaderUserSelected($event)"></app-header>
+        <div class="main-content">
+    <div [ngClass]="{'reset-gap':global.checkWideChannelOrUserThreadBox}"  class="full-page-content">
+        <app-workspace [ngClass]="{
 
             'workspace-open': isWorkspaceOpen,
             'workspace-closed':!isWorkspaceOpen,
             'close-box':global.openChannelorUserBox || global.openChannelOrUserThread ,
             'open-box':!global.openChannelorUserBox && !global.openChannelOrUserThread,
 
-        }"
-        (userSelected)="onUserSelected($event)"
-        (channelSelected)="onChannelSelected($event)"
-        [selectedUserHome]="selectedUser"
-        [selectedChannelHome]="selectedChannel"
-      ></app-workspace>
-      <app-start-screen
-        [ngClass]="{
-          'display-show': global.checkWideChannelorUserBox,
-          hiddenFullWidth: global.checkWideChannelOrUserThreadBox,
-          'startScreen-open': global.openChannelorUserBox || !isWorkspaceOpen,
-          hidden: global.openChannelOrUserThread
-        }"
-        (userSelectedFromStartscreen)="
-          handleUserSelectionFromStartscreen($event)
-        "
-        (channelSelectedFromStartscreen)="
-          handleChannelSelectionFromStartscreen($event)
-        "
-        (userSelected)="onUserSelected($event)"
-        [onHeaderChannel]="onHeaderChannel"
-        [onHeaderUser]="onHeaderUser"
-        [selectedUser]="selectedUser"
-        [mentionUser]="mentionUser"
-        [selectedChannel]="selectedChannel"
-        (threadOpened)="onThreadOpened()"
-      >
-      </app-start-screen>
+        }" (userSelected)="onUserSelected($event)" (channelSelected)="onChannelSelected($event)"
+            [selectedUserHome]="selectedUser" [selectedChannelHome]="selectedChannel"></app-workspace>
+
+        <app-start-screen
+          [ngClass]="{ 'display-show':global.checkWideChannelorUserBox,
+            'hiddenFullWidth':global.checkWideChannelOrUserThreadBox,
+             'startScreen-open':global.openChannelorUserBox || !isWorkspaceOpen,
+              'hidden':global.openChannelOrUserThread}" 
+        (userSelectedFromStartscreen)="handleUserSelectionFromStartscreen($event)"
+            (channelSelectedFromStartscreen)="handleChannelSelectionFromStartscreen($event)"
+            (userSelected)="onUserSelected($event)" [onHeaderChannel]="onHeaderChannel" [onHeaderUser]="onHeaderUser"
+            [selectedUser]="selectedUser" [mentionUser]="mentionUser" [selectedChannel]="selectedChannel"
+            (threadOpened)="onThreadOpened()">
+        </app-start-screen>
 
       <app-thread
         *ngIf="directThreadId || channelThreadId"

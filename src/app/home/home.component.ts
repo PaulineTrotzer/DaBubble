@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject,HostListener} from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { WorkspaceComponent } from '../workspace/workspace.component';
 import { StartScreenComponent } from '../start-screen/start-screen.component';
@@ -153,13 +153,20 @@ export class HomeComponent implements OnInit {
   }
 
   toggleWorkspace() {
-    if(window.innerWidth<=720 && this.global.openChannelorUserBox ){
+    if(window.innerWidth<=1200 && this.global.openChannelorUserBox){
       this.global.openChannelorUserBox=false;
-    }else if(window.innerWidth<=720 && this.global.openChannelOrUserThread){
+    }else if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
       this.global.openChannelOrUserThread=false;
       this.isWorkspaceOpen=true;
+    } else if(window.innerWidth<=1200 && this.global.checkWideChannelorUserBox){
+      this.global.checkWideChannelorUserBox=false;
+      this.global.openChannelorUserBox=true;
+      this.isWorkspaceOpen=true;
+    }else if(window.innerWidth<=1200 && this.global.checkWideChannelOrUserThreadBox){
+      this.global.checkWideChannelOrUserThreadBox=false;
+      this.global.openChannelOrUserThread=true;
     }
-    else {
+    else { 
       this.isWorkspaceOpen = !this.isWorkspaceOpen;
     }
   }
@@ -170,5 +177,31 @@ export class HomeComponent implements OnInit {
     return `../../assets/img/${state}-workspace-${variant}.png`;
   }
 
+   
 
+
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+      if(window.innerWidth>1200 && this.global.openChannelOrUserThread){
+        this.global.openChannelOrUserThread=false;
+        this.global.checkWideChannelOrUserThreadBox=true;
+      } else if(this.global.checkWideChannelorUserBox && window.innerWidth<=1200){
+                this.isWorkspaceOpen=false;
+                console.log('hallo')
+      }else if(this.global.openChannelorUserBox && window.innerWidth>=1200){
+               this.isWorkspaceOpen=false;
+               console.log('naxadep');
+      } 
+      else if(this.global.checkWideChannelOrUserThreadBox && window.innerWidth<=1200){
+                console.log('thread')
+                this.isWorkspaceOpen=false;
+                this.global.checkWideChannelorUserBox=false;
+                this.global.openChannelorUserBox =false;
+                this.global.openChannelOrUserThread=true;
+      } else if(this.global.openChannelOrUserThread && window.innerWidth>=1200){
+                this.global.checkWideChannelOrUserThreadBox=true;
+                console.log('happy');
+      }
+  }
 }

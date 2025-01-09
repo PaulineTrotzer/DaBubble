@@ -139,7 +139,7 @@ selectUser(user: any) {
 }   
 
 openvollWidtChannelOrUserBox() {
-  if(window.innerWidth<=1349 && window.innerWidth > 720){
+  if(window.innerWidth<=1900 && window.innerWidth > 1200){
     return this.global.checkWideChannelorUserBox=true;
   }else{
     return this.global.checkWideChannelorUserBox=false;
@@ -147,36 +147,25 @@ openvollWidtChannelOrUserBox() {
 } 
   
 hiddenVoolThreadBox(){
-  if(window.innerWidth<=1349 && window.innerWidth > 720 && this.global.checkWideChannelOrUserThreadBox){
+  if(window.innerWidth<=1900 && window.innerWidth > 1200 && this.global.checkWideChannelOrUserThreadBox){
     this.global.checkWideChannelOrUserThreadBox=false;
   }
 }
 
 cheackChatOpen(){
-if(window.innerWidth<=720 && this.global.openChannelOrUserThread){
+if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
   this.global.openChannelOrUserThread=false;
 }
 }    
 
 checkWidtSize(){
-if(window.innerWidth<=720){
-return  this.global.openChannelorUserBox = true;
-}else{
-return  this.global.openChannelorUserBox = false;
+  if(window.innerWidth<=1200){
+    console.log('1200 dempq')
+  return  this.global.openChannelorUserBox = true;
+   } else{
+  return  this.global.openChannelorUserBox = false;
+   }
 }
-}
-
-
-
-
-// async updateRoomStatus(userId: string, status: boolean) {
-//   const currentUserDocRef = doc(this.firestore, 'roomStatus', this.userId);
-//   await setDoc(currentUserDocRef, { isInRoom: status },{ merge: true });
-//   const clickedUserDocRef = doc(this.firestore, 'roomStatus', userId);
-//   await setDoc(clickedUserDocRef, { isInRoom: status },{ merge: true });
-// }
-  
-
 
            
   selectCurrentUser() {

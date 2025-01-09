@@ -54,3 +54,24 @@ h2 {
 .have-fun-txt {
   margin-top: 20px;
 }
+
+
+@media(max-width:1800px){
+  .full-page-content{
+    display: block;
+ 
+  } 
+}
+  
+@media(max-width:968px){
+  .full-page-content{
+    height: unset;
+ 
+  } 
+}
+
+  @media(max-width:780px){
+    .full-page-content{
+      height: unset;
+    } 
+}

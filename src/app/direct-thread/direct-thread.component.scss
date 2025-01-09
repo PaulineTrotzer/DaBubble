@@ -4,7 +4,8 @@
   border-radius: 30px;
   position: relative;
   height: 100vh;
-  width: 510px;
+  width: 100%;
+  // width:520px;
 }
 
 .text-info-edit {
@@ -699,13 +700,13 @@ svg {
 }
 
 
-@media(max-width:1349px){
+@media(max-width:1900px){
   .full-page-content.hidden-width{
     width: unset;
   }
 }
 
-@media (max-width:720px){
+@media (max-width:1200px){
   .full-page-content.reset-width{
     width: unset;
   }

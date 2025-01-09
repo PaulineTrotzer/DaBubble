@@ -149,24 +149,20 @@ export class InputFieldComponent implements OnInit, OnChanges {
     } else {
       try {
         const fileData = await this.uploadFilesToFirebaseStorage();
-
         const messageData = this.messageData(
           this.chatMessage,
           this.senderStickerCount,
           this.recipientStickerCount
         );
-
         messageData.selectedFiles = fileData;
-
         const messagesRef = collection(this.firestore, 'messages');
         const docRef = await addDoc(messagesRef, messageData);
         const messageWithId = { ...messageData, id: docRef.id };
         this.messagesData.push(messageWithId);
         await this.setMessageCount();
         this.messageSent.emit();
-        this.chatMessage = '';
-        this.formattedChatMessage = '';
-        this.selectFiles = [];
+        this.resetTextAreaAttribute();
+        this.resetAreaHeight();
       } catch (error) {
         console.error('Fehler beim Senden der Nachricht:', error);
       }
@@ -410,21 +406,32 @@ export class InputFieldComponent implements OnInit, OnChanges {
       }
     });
   }
-
+  
+  textAreaAutoHight:any;
+   
   onInput(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+    
+
     const container = document.querySelector('.main-input-area') as HTMLElement;
     if (container) {
-      container.scrollTop = container.scrollHeight;
+       container.scrollTop = container.scrollHeight;
     }
     const containerh = document.querySelector('.highlight') as HTMLElement;
     if (containerh) {
       containerh.scrollTop = containerh.scrollHeight;
     }
     this.updateFormattedMessage();
-  }
+  } 
+
+
+  resetAreaHeight(){
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+     return  textarea.style.height = 'auto';
+  }   
+
 
   updateSelectedUser(newUser: any) {
     this.selectedUser = newUser;
@@ -516,5 +523,13 @@ export class InputFieldComponent implements OnInit, OnChanges {
 
   deleteFile(index: number) {
     this.selectFiles.splice(index, 1);
-  }
+  } 
+
+  resetTextAreaAttribute():void{
+        this.chatMessage = '';
+        this.formattedChatMessage = '';
+        this.selectFiles = []; 
+      }
+
+
 }

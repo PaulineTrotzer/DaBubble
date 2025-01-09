@@ -213,7 +213,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
      
   checkWidtSize(){
-    if(window.innerWidth<=720){
+    if(window.innerWidth<=1200){
       return  this.global.openChannelorUserBox = true;
     }else{
       return  this.global.openChannelorUserBox = false;
@@ -221,14 +221,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
    } 
 
    checkThredBox() {
-    if(window.innerWidth<=720 && this.global.openChannelOrUserThread){
+    if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
       this.global.openChannelOrUserThread=false;
       this.global.openChannelorUserBox=true;
     }
    }
 
    hiddenThreadFullBox(){
-    if(window.innerWidth<=1349 && window.innerWidth > 720 && this.global.checkWideChannelOrUserThreadBox){
+    if(window.innerWidth<=1349 && window.innerWidth > 1200 && this.global.checkWideChannelOrUserThreadBox){
       this.global.checkWideChannelorUserBox=true;
       this.global.checkWideChannelOrUserThreadBox=false;
     }
