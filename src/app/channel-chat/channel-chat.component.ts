@@ -116,11 +116,13 @@ export class ChannelChatComponent implements OnInit {
   }
 
   scrollToBottom(): void {
-    try {
-      this.scrollContainer.nativeElement.scrollTop =
-        this.scrollContainer.nativeElement.scrollHeight;
-    } catch (err) {
-      console.warn('Could not scroll to bottom:', err);
+    if(this.shouldScrollDown){
+      try {
+        this.scrollContainer.nativeElement.scrollTop =
+          this.scrollContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.warn('Could not scroll to bottom:', err);
+      }
     }
   }
 
@@ -365,6 +367,7 @@ export class ChannelChatComponent implements OnInit {
         return;
       }
 
+      this.shouldScrollDown = false;
       this.addLastUsedEmoji(emoji);
 
       const messageDocRef = doc(
@@ -417,6 +420,7 @@ export class ChannelChatComponent implements OnInit {
     }
 
     this.closePicker();
+    this.shouldScrollDown = false;
   }
 
   closePicker() {
