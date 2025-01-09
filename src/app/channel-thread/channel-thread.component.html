@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="thread" #scrollContainer>
+  <div class="thread">
     <header>
       <div class="left">
         <h2>Thread</h2>
@@ -22,7 +22,8 @@
       </div>
     </header>
 
-    <app-mention-message-box (cancelMessageBoxCard)="onCancelMessageBox()" *ngIf="wasClickedInChannelThread"
+    <div class="scroll-container" #scrollContainer>
+      <app-mention-message-box (cancelMessageBoxCard)="onCancelMessageBox()" *ngIf="wasClickedInChannelThread"
       (enterChatUser)="selectUserForChat($event)" (closeMentionBox)="closeMentionBoxHandler()">
     </app-mention-message-box>
 
@@ -319,5 +320,8 @@
       </div>
     </div>
   </div>
+    </div>
+
+    
   <app-input-field (messageSent)="onMessageSent()" [isChannelThreadOpen]="isChannelThreadOpen"></app-input-field>
 </div>

@@ -6,9 +6,13 @@
 }
 
 .thread {
-  max-height: 730px;
-  height: 100%;
   overflow: auto;
+}
+
+.scroll-container {
+  max-height: 630px;
+  height: 100%;
+  overflow: auto;  
 }
 
 .channel-name {
