@@ -33,7 +33,7 @@ export class GlobalVariableService {
   selectedFilesChat:boolean=false; 
   selectedFilesChannel:boolean=false; 
   
-  
+  selectThreadFiles:any=[]
    
 
 

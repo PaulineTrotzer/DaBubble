@@ -366,7 +366,7 @@
                       <div class="show-selected-files">
                           <div *ngFor="let file of message.selectedFiles">
                               <div class="mai-file" *ngIf="file.url">
-  
+                                    
                                   <div class="file-info" *ngIf="file.type.startsWith('image/')">
                                       <a [href]="file.url" target="_blank">
                                           <img [src]="file.data">
@@ -421,8 +421,50 @@
               <span (click)="onUserNameClick()" class="name-chat-partner">&#64;{{selectedUser?.name}}</span> und dir statt
           </div>
       </div>
-      <app-input-field (mentionCardOpened)="handleMentionCardOpened($event)" [selectedChannel]="selectedChannel"
+ 
+      <app-input-field   (filesChangedChat)="onChatFilesChanged($event)" (mentionCardOpened)="handleMentionCardOpened($event)" [selectedChannel]="selectedChannel"
           [selectedUser]="selectedUser" (messageSent)="onMessageSent()"></app-input-field>
-    </div>
+      </div>
+
+
+      <div  class="show-file-main">
+        <div *ngFor="let file of chatFiles; let i=index">
+          <div class="file-info-box" *ngIf="file.type.startsWith('image/')">
+            <div class="file-seperate-box">
+              <img  [src]="file.data">
+              <div class="delet-seperate-box" (click)="deleteFile(i)">
+                <span class="delete-seperate-span">x</span>
+              </div>
+            </div>
+          </div>
+          <div  class="file-info-box"   *ngIf="file.type==='application/pdf' ">
+            <div class="file-seperate-box">
+              <img src="../../assets/img/pdf.png">
+              <div class="delet-seperate-box" (click)="deleteFile(i)">
+                <span class="delete-seperate-span">x</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-info-box"  *ngIf="file.type==='text/plain'">
+            <div class="file-seperate-box">
+              <img src="../../assets/img/textfile.png">
+              <div class="delet-seperate-box"   (click)="deleteFile(i)">
+                <span class="delete-seperate-span" >x</span>
+              </div>
+            </div>
+          </div>
     
+          <div class="file-info-mix-box"  *ngIf="!file.type.startsWith('image/')
+               &&  file.type !== 'application/pdf' && file.type!=='text/plain'">
+            <div  class="file-box">
+              <img src="../../assets/img/alldatei.png">
+              <div class="mix-file">
+                <span class="delete-span"  (click)="deleteFile(i)">x</span>
+                <span>{{file.type}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 </div>

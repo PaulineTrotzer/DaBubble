@@ -172,7 +172,7 @@
                 </div>
               </ng-container>
 
-
+           
 
 
 
@@ -209,7 +209,45 @@
               <div *ngIf="message.editedTextShow" class="text-info-edit">
                 (Bearbeitet)
               </div>
-            </div>
+            </div>  
+   
+
+             
+            <div class="show-selected-files">
+              <div *ngFor="let file of message.selectedFiles">
+                  <div class="mai-file" *ngIf="file.url">
+                        
+                      <div class="file-info" *ngIf="file.type.startsWith('image/')">
+                          <a [href]="file.url" target="_blank">
+                              <img [src]="file.data">
+                          </a>
+                      </div>
+
+                      <div class="file-info" *ngIf="file.type==='application/pdf'">
+                          <a [href]="file.url" target="_blank">
+                              <img src="../../assets/img/pdf.png">
+                          </a>
+                      </div>
+                      <div class="file-info" *ngIf="file.type==='text/plain'">
+                          <a [href]="file.url" target="_blank">
+                              <img src="../../assets/img/textfile.png">
+                          </a>
+                      </div>
+
+                      <div class="file-info" *ngIf="!file.type.startsWith('image/') && 
+                      file.type !== 'application/pdf' && file.type!== 'text/plain'">
+                          <a [href]="file.url" target="_blank">
+                              <img src="../../assets/img/alldatei.png">
+                          </a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+
+
           </div>
         </div>
 
@@ -349,6 +387,53 @@
 
       </div>
       <div class="input-holder">
-        <app-input-field [selectedUser]="selectedUser" [isDirectThreadOpen]="isDirectThreadOpen"></app-input-field>
-      </div>
+        <!-- <app-input-field  [selectedUser]="selectedUser" [isDirectThreadOpen]="isDirectThreadOpen" ></app-input-field>  -->
+
+
+        <app-direct-thread-input [selectedUser]="selectedUser"  [isDirectThreadOpen]="isDirectThreadOpen">
+
+        </app-direct-thread-input>  
+    
+
+
+        <div  class="show-file-main">
+          <div *ngFor="let file of global.selectThreadFiles; let i=index">
+            <div class="file-info-box" *ngIf="file.type.startsWith('image/')">
+              <div class="file-seperate-box">
+                <img  [src]="file.data">
+                <div class="delet-seperate-box" (click)="deleteFile(i)">
+                  <span class="delete-seperate-span">x</span>
+                </div>
+              </div>
+            </div>
+            <div  class="file-info-box"   *ngIf="file.type==='application/pdf' ">
+              <div class="file-seperate-box">
+                <img src="../../assets/img/pdf.png">
+                <div class="delet-seperate-box" (click)="deleteFile(i)">
+                  <span class="delete-seperate-span">x</span>
+                </div>
+              </div>
+            </div>
+            <div class="file-info-box"  *ngIf="file.type==='text/plain'">
+              <div class="file-seperate-box">
+                <img src="../../assets/img/textfile.png">
+                <div class="delet-seperate-box"   (click)="deleteFile(i)">
+                  <span class="delete-seperate-span" >x</span>
+                </div>
+              </div>
+            </div>
+      
+            <div class="file-info-mix-box"  *ngIf="!file.type.startsWith('image/')
+                 &&  file.type !== 'application/pdf' && file.type!=='text/plain'">
+              <div  class="file-box">
+                <img src="../../assets/img/alldatei.png">
+                <div class="mix-file">
+                  <span class="delete-span"  (click)="deleteFile(i)">x</span>
+                  <span>{{file.type}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+   
     </div>

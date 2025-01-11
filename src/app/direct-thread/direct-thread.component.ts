@@ -36,6 +36,8 @@ import { Emoji } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { currentThreadMessage } from '../models/threadMessage.class';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
+import { DirectThreadInputComponent } from '../direct-thread-input/direct-thread-input.component';
+
 import {
   animate,
   style,
@@ -43,6 +45,8 @@ import {
   trigger,
 } from '@angular/animations';
 import { MentionMessageBoxComponent } from '../mention-message-box/mention-message-box.component';
+
+
 
 @Component({
   selector: 'app-direct-thread',
@@ -53,7 +57,8 @@ import { MentionMessageBoxComponent } from '../mention-message-box/mention-messa
     InputFieldComponent,
     FormsModule,
     MatCardModule,
-    MentionMessageBoxComponent
+    MentionMessageBoxComponent,
+    DirectThreadInputComponent
   ],
   templateUrl: './direct-thread.component.html',
   styleUrls: ['./direct-thread.component.scss'],
@@ -742,6 +747,11 @@ export class DirectThreadComponent implements OnInit {
     }
    }  
 
-
    
+  deleteFile(index: number) {
+    this.global.selectThreadFiles.splice(index, 1);
+  } 
+
+
+
   }

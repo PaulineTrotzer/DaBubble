@@ -42,14 +42,15 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-input-field',
+  selector: 'app-direct-thread-input',
   standalone: true,
   imports: [CommonModule, PickerComponent, PeopleMentionComponent, FormsModule],
-  templateUrl: './input-field.component.html',
-  styleUrl: './input-field.component.scss',
+  templateUrl: './direct-thread-input.component.html',
+  styleUrl: './direct-thread-input.component.scss'
 })
-export class InputFieldComponent implements OnInit, OnChanges {
-  currentThreadMessageId: string | null = null;
+export class DirectThreadInputComponent {
+  
+ currentThreadMessageId: string | null = null;
   currentChannelThreadId: string | null = null;
   @Input() isDirectThreadOpen: boolean = false;
   @Input() isChannelThreadOpen: boolean = false;
@@ -80,15 +81,18 @@ export class InputFieldComponent implements OnInit, OnChanges {
   isMentionPeopleCardVisible: boolean = false;
   isMentionCardOpen: boolean = true;
   @Output() mentionUserOut = new EventEmitter<string>(); 
+  
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedUser'] && this.selectedUser?.id) {
-      this.selectFiles=[];
-    } 
-    if (changes['selectedChannel'] && this.selectedChannel?.id) {
-      this.selectFiles=[];
-    }  
-  }
+
+
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['selectedUser'] && this.selectedUser?.id) {
+  //     this.selectFiles=[];
+  //   } 
+  //   if (changes['selectedChannel'] && this.selectedChannel?.id) {
+  //     this.selectFiles=[];
+  //   }  
+  // }
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id');
@@ -128,7 +132,6 @@ export class InputFieldComponent implements OnInit, OnChanges {
     }
     this.formattedMessage = '';
     this.processSendMessage();
-    
   }
 
   shouldSendMessage(event: KeyboardEvent): boolean {
@@ -146,15 +149,15 @@ export class InputFieldComponent implements OnInit, OnChanges {
   private async processSendMessage(): Promise<void> {
     if (this.selectedChannel && !this.isChannelThreadOpen) {
       await this.sendChannelMessage();
-      this.resetTextAreaAttribute();
+
     } 
-    //   else if (this.isDirectThreadOpen) {
-    //   await this.sendDirectThreadMessage();
-    //   await this.setMessageCount();
-    // } 
+      else if (this.isDirectThreadOpen) {
+      await this.sendDirectThreadMessage();
+      await this.setMessageCount();
+    } 
+    
      else if (this.isChannelThreadOpen) {
       await this.sendChannelThreadMessage();
-     
     } else {
       try {
         const fileData = await this.uploadFilesToFirebaseStorage();
@@ -202,7 +205,6 @@ export class InputFieldComponent implements OnInit, OnChanges {
       };
       await addDoc(threadRef, messageData);
       this.resetInputdata();
-      this.resetTextAreaAttribute();
       this.messageSent.emit();
     } catch (err) {
       console.error(err);
@@ -224,18 +226,21 @@ export class InputFieldComponent implements OnInit, OnChanges {
         this.firestore,
         `messages/${this.currentThreadMessageId}/threadMessages`
       );
+
+      const fileData = await this.uploadFilesToFirebaseStorageDirectThread()
       const messageData = {
         text: this.chatMessage,
         senderId: this.global.currentUserData.id,
         senderName: this.global.currentUserData.name,
         senderPicture: this.global.currentUserData.picture || '',
         timestamp: new Date(),
-        selectedFiles: this.selectFiles,
+        selectedFiles: this.global.selectThreadFiles,
         editedTextShow: false,
         recipientId: this.selectedUser.uid,
         recipientName: this.selectedUser.name,
         reactions: '',
-      };
+      }; 
+      messageData.selectedFiles = fileData;
       const docRef = await addDoc(threadMessagesRef, messageData);
       this.threadControlService.setLastMessageId(docRef.id);
       this.resetInputdata();
@@ -256,20 +261,6 @@ export class InputFieldComponent implements OnInit, OnChanges {
         console.error('User ID or selected user ID is missing.');
         return;
       }
-      // const currentUserDocRef = doc(this.firestore, 'roomStatus', this.userId);
-      // const clickedUserDocRef = doc(this.firestore, 'roomStatus', this.selectedUser.id);
-      // const [currentUserStatus, clickedUserStatus] = await Promise.all([
-      //   getDoc(currentUserDocRef),
-      //   getDoc(clickedUserDocRef),
-      // ]);
-      // if (currentUserStatus.exists() && clickedUserStatus.exists()) {
-      //   const currentUserInRoom = currentUserStatus.data()['isInRoom'];
-      //   const clickedUserInRoom = clickedUserStatus.data()['isInRoom'];
-      //   if (currentUserInRoom && clickedUserInRoom) {
-      //     console.log('Beide Benutzer sind im selben Raum. Nachrichtenzähler wird nicht erhöht.');
-      //     return;
-      //   }
-      // }
       const messageCountDocRef = doc(
         this.firestore,
         'messageCounts',
@@ -307,10 +298,27 @@ export class InputFieldComponent implements OnInit, OnChanges {
     });
     return await Promise.all(uploadPromises);
   }  
+  
 
+  async uploadFilesToFirebaseStorageDirectThread(): Promise<
+  { url: string; type: string }[]
+> {
+  const storage = this.storage;
+  const uploadPromises = this.global.selectThreadFiles.map(async (file:any, index:any) => {
+    const filePath = `uploads/${new Date().getTime()}_${index}_${
+      file.type.split('/')[1]
+    }`;
+    const fileRef = ref(storage, filePath);
+    await uploadString(fileRef, file.data, 'data_url');
+    const url = await getDownloadURL(fileRef);
+    return { url, type: file.type, data: file.data };
+  });
+  return await Promise.all(uploadPromises);
+}  
 
   
-   
+
+
 
   handleNewThreadMessage(threadMessageId: string) {
     this.currentThreadMessageId = threadMessageId;
@@ -532,6 +540,7 @@ export class InputFieldComponent implements OnInit, OnChanges {
   
   @Output() filesChangedChat = new EventEmitter<any[]>();
   selectFiles: any[] = [];
+  // selectFiles: any[] = [];
    
   onFileSelected(event: Event) {  
     const input = event.target as HTMLInputElement;
@@ -551,6 +560,29 @@ export class InputFieldComponent implements OnInit, OnChanges {
     }
   }    
 
+  // @Output() filesChangedThread = new EventEmitter<any[]>();
+  // selectThreadFiles:any[]=[];
+
+  onFileSelectedDirectThread(event: Event) {
+    console.log('threadi hamar es ste em ')
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      Array.from(input.files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.global.selectThreadFiles.push({
+            type: file.type,
+            data: reader.result as string,
+             
+          });
+          // this.filesChangedThread.emit(this.selectThreadFiles); 
+        };
+        reader.readAsDataURL(file);
+      });
+      input.value = '';
+    }
+  }
+
   deleteFile(index: number) {
     this.selectFiles.splice(index, 1);
   } 
@@ -559,8 +591,8 @@ export class InputFieldComponent implements OnInit, OnChanges {
         this.chatMessage = '';
         this.formattedChatMessage = '';
         this.selectFiles = []; 
-        this.filesChangedChat.emit(this.selectFiles);
       }
+
 
 
 }

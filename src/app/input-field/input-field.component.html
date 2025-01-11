@@ -9,7 +9,7 @@
   </div>
 
 
-  <div  class="show-selected-files">
+  <!-- <div  class="show-selected-files">
     <div *ngFor="let file of selectFiles; let i=index">
 
       <div  class="file-info" *ngIf="file.type.startsWith('image/')">
@@ -48,17 +48,27 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+ 
+
+  
+
 
   <div class="interactions-send-msg-ct">
     <div class="only-interactions-bottom-ct">
       <div class="plus-separator-flex">
+  
+
         <div>
           <div>
             <input type="file" id="upload" (change)="onFileSelected($event)" hidden />
             <label for="upload"> <img class="plus" src="./assets/img/add.svg"></label>
-          </div>
-        </div>
+          </div> 
+        </div> 
+
+   
+     
+
 
       </div>
       <img src="./assets/img/vector_4.svg">

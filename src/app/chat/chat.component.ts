@@ -130,7 +130,9 @@ export class ChatComponent implements OnInit, OnChanges {
         }
       });
     });
-  }
+  }  
+  
+     
 
   closePicker() {
     this.overlayStatusService.setOverlayStatus(false);
@@ -248,7 +250,15 @@ export class ChatComponent implements OnInit, OnChanges {
       this.global.clearCurrentChannel();
       await this.getMessages();
       this.chatMessage = '';
-    }
+    }  
+
+      if (changes['selectedUser'] && this.selectedUser?.id) {
+        this.chatFiles=[];
+      } 
+      if (changes['selectedChannel'] && this.selectedChannel?.id) {
+        this.chatFiles=[];
+      }  
+    
   }
 
   checkForSelfChat() {
@@ -369,7 +379,7 @@ export class ChatComponent implements OnInit, OnChanges {
       recipientChoosedStickerBackColor: '',
       stickerBoxCurrentStyle: null,
       stickerBoxOpacity: null,
-      selectedFiles: [],
+      selectedFiles: this.chatFiles,
     };
   }
 
@@ -441,6 +451,8 @@ export class ChatComponent implements OnInit, OnChanges {
   }
 
   async openThread(messageId: any) {
+    this.global.selectedFilesChat=false; 
+    this.global.selectedFilesChannel=false; 
     try {
       this.threadOpened.emit();
       this.global.setCurrentThreadMessage(messageId);
@@ -468,7 +480,6 @@ export class ChatComponent implements OnInit, OnChanges {
     if (window.innerWidth <= 1200 && this.global.openChannelorUserBox) {
       this.global.openChannelorUserBox = false;
       this.global.openChannelOrUserThread =true;
-
     }
   }
 
@@ -903,5 +914,17 @@ export class ChatComponent implements OnInit, OnChanges {
 
   selectUser(user: any) {
     this.selectedUser = user;
+  } 
+
+
+  public chatFiles: any[] = [];
+
+  onChatFilesChanged(files: any[]): void {
+    this.chatFiles = files;
+    console.log(this.chatFiles)
   }
+    
+  deleteFile(index: number) {
+    this.chatFiles.splice(index, 1);
+  } 
 }
