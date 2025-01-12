@@ -185,7 +185,8 @@
     <div class="answers-container" (mouseenter)="hoveredMessageId = message.id" (mouseleave)="hoveredMessageId = null"
       *ngFor="let message of messages">
       <div class="edit-message-container" *ngIf="showEditArea === message.id">
-        <form>
+        <form> 
+          
           <div class="img-container textarea" (click)="togglePicker(message.id, true)">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
               <mask id="mask0_86084_18390" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
@@ -317,11 +318,98 @@
             </div> -->
           </div>
         </div>
-      </div>
+      </div> 
+
+      <div class="show-selected-files">
+        <div *ngFor="let file of message.selectedFiles">
+            <div class="mai-file" *ngIf="file.url">
+                  
+                <div class="file-info" *ngIf="file.type.startsWith('image/')">
+                    <a [href]="file.url" target="_blank">
+                        <img [src]="file.data">
+                    </a>
+                </div>
+                  
+                <div class="file-info" *ngIf="file.type==='application/pdf'">
+                    <a [href]="file.url" target="_blank">
+                        <img src="../../assets/img/pdf.png">
+                    </a>
+                </div>
+                <div class="file-info" *ngIf="file.type==='text/plain'">
+                    <a [href]="file.url" target="_blank">
+                        <img src="../../assets/img/textfile.png">
+                    </a>
+                </div>
+
+                <div class="file-info" *ngIf="!file.type.startsWith('image/') && 
+                file.type !== 'application/pdf' && file.type!== 'text/plain'">
+                    <a [href]="file.url" target="_blank">
+                        <img src="../../assets/img/alldatei.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
     </div>
   </div>
     </div>
 
     
-  <app-input-field (messageSent)="onMessageSent()" [isChannelThreadOpen]="isChannelThreadOpen"></app-input-field>
+  <!-- <app-input-field (messageSent)="onMessageSent()" [isChannelThreadOpen]="isChannelThreadOpen"></app-input-field> -->
+  
+  <div  class="show-file-main">
+    <div *ngFor="let file of global?.selectChannelThreadFiles; let i=index">
+      <div class="file-info-box" *ngIf="file.type.startsWith('image/')">
+        <div class="file-seperate-box">
+          <img  [src]="file.data">
+          <div class="delet-seperate-box" (click)="deleteFile(i)">
+            <span class="delete-seperate-span">x</span>
+          </div>
+        </div>
+      </div>
+      <div  class="file-info-box"   *ngIf="file.type==='application/pdf' ">
+        <div class="file-seperate-box">
+          <img src="../../assets/img/pdf.png">
+          <div class="delet-seperate-box" (click)="deleteFile(i)">
+            <span class="delete-seperate-span">x</span>
+          </div>
+        </div>
+      </div>
+      <div class="file-info-box"  *ngIf="file.type==='text/plain'">
+        <div class="file-seperate-box">
+          <img src="../../assets/img/textfile.png">
+          <div class="delet-seperate-box"   (click)="deleteFile(i)">
+            <span class="delete-seperate-span" >x</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-info-mix-box"  *ngIf="!file.type.startsWith('image/')
+           &&  file.type !== 'application/pdf' && file.type!=='text/plain'">
+        <div  class="file-box">
+          <img src="../../assets/img/alldatei.png">
+          <div class="mix-file">
+            <span class="delete-span"  (click)="deleteFile(i)">x</span>
+            <span>{{file.type}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+   <app-channel-thread-input (messageSent)="onMessageSent()"   [isChannelThreadOpen]="isChannelThreadOpen"></app-channel-thread-input>
+
+
+  
+
+
 </div>

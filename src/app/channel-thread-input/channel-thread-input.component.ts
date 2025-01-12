@@ -38,15 +38,15 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-direct-thread-input',
+  selector: 'app-channel-thread-input',
   standalone: true,
   imports: [CommonModule, PickerComponent, PeopleMentionComponent, FormsModule],
-  templateUrl: './direct-thread-input.component.html',
-  styleUrl: './direct-thread-input.component.scss'
+  templateUrl: './channel-thread-input.component.html',
+  styleUrl: './channel-thread-input.component.scss'
 })
-export class DirectThreadInputComponent {
-  
- currentThreadMessageId: string | null = null;
+export class ChannelThreadInputComponent {
+ 
+  currentThreadMessageId: string | null = null;
   currentChannelThreadId: string | null = null;
   @Input() isDirectThreadOpen: boolean = false;
   @Input() isChannelThreadOpen: boolean = false;
@@ -146,14 +146,14 @@ export class DirectThreadInputComponent {
     // if (this.selectedChannel && !this.isChannelThreadOpen) {
     //   await this.sendChannelMessage();
     // } 
-      if (this.isDirectThreadOpen) {
-      await this.sendDirectThreadMessage();
-      await this.setMessageCount();
-    } 
-
-    //  else if (this.isChannelThreadOpen) {
-    //   await this.sendChannelThreadMessage();
+    //   if (this.isDirectThreadOpen) {
+    //   await this.sendDirectThreadMessage();
+    //   await this.setMessageCount();
     // } 
+
+    if (this.isChannelThreadOpen) {
+      await this.sendChannelThreadMessage();
+    } 
 
     // else {
     //   try {
@@ -178,75 +178,78 @@ export class DirectThreadInputComponent {
     // }
   }
 
-  // async sendChannelThreadMessage() {
-  //   if (!this.currentChannelThreadId || this.chatMessage.trim() === '') {
-  //     console.warn('Thread is not open or message is empty');
-  //     return;
-  //   }
-  //   try {
-  //     const threadRef = collection(
-  //       this.firestore,
-  //       'channels',
-  //       this.selectedChannel.id,
-  //       'messages',
-  //       this.currentChannelThreadId,
-  //       'thread'
-  //     );
-  //     const messageData = {
-  //       text: this.chatMessage,
-  //       senderId: this.global.currentUserData.id,
-  //       senderName: this.global.currentUserData.name,
-  //       senderPicture: this.global.currentUserData.picture || '',
-  //       timestamp: new Date(),
-  //       selectedFiles: this.selectFiles,
-  //     };
-  //     await addDoc(threadRef, messageData);
-  //     this.resetInputdata();
-  //     this.messageSent.emit();
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
-  async sendDirectThreadMessage() {
-    if (!this.isDirectThreadOpen || this.chatMessage.trim() === '') {
+  async sendChannelThreadMessage() {
+    if (!this.currentChannelThreadId || this.chatMessage.trim() === '') {
       console.warn('Thread is not open or message is empty');
       return;
     }
-    if (!this.currentThreadMessageId) {
-      console.error('No current message selected.');
-      return;
-    }
-
     try {
-      const threadMessagesRef = collection(
+      const threadRef = collection(
         this.firestore,
-        `messages/${this.currentThreadMessageId}/threadMessages`
-      );
-
-      const fileData = await this.uploadFilesToFirebaseStorageDirectThread()
+        'channels',
+        this.selectedChannel.id,
+        'messages',
+        this.currentChannelThreadId,
+        'thread'
+      ); 
+      const fileData = await this.uploadFilesToFirebaseStorageChannelThread()
       const messageData = {
         text: this.chatMessage,
         senderId: this.global.currentUserData.id,
         senderName: this.global.currentUserData.name,
         senderPicture: this.global.currentUserData.picture || '',
         timestamp: new Date(),
-        selectedFiles: this.global.selectThreadFiles,
-        editedTextShow: false,
-        recipientId: this.selectedUser.uid,
-        recipientName: this.selectedUser.name,
-        reactions: '',
+        selectedFiles: this.global.selectChannelThreadFiles,
       }; 
       messageData.selectedFiles = fileData;
-      const docRef = await addDoc(threadMessagesRef, messageData);
-      this.threadControlService.setLastMessageId(docRef.id);
+      await addDoc(threadRef, messageData);
       // this.resetInputdata();
-      this.resetTextAreaAttribute();
       this.messageSent.emit();
-    } catch (error) {
-      console.error('Error sending message:', error);
+      this.resetTextAreaAttribute();
+    } catch (err) {
+      console.error(err);
     }
   }
+
+  // async sendDirectThreadMessage() {
+  //   if (!this.isDirectThreadOpen || this.chatMessage.trim() === '') {
+  //     console.warn('Thread is not open or message is empty');
+  //     return;
+  //   }
+  //   if (!this.currentThreadMessageId) {
+  //     console.error('No current message selected.');
+  //     return;
+  //   }
+
+  //   try {
+  //     const threadMessagesRef = collection(
+  //       this.firestore,
+  //       `messages/${this.currentThreadMessageId}/threadMessages`
+  //     );
+
+  //     const fileData = await this.uploadFilesToFirebaseStorageChannelThread()
+  //     const messageData = {
+  //       text: this.chatMessage,
+  //       senderId: this.global.currentUserData.id,
+  //       senderName: this.global.currentUserData.name,
+  //       senderPicture: this.global.currentUserData.picture || '',
+  //       timestamp: new Date(),
+  //       selectedFiles: this.global.selectThreadFiles,
+  //       editedTextShow: false,
+  //       recipientId: this.selectedUser.uid,
+  //       recipientName: this.selectedUser.name,
+  //       reactions: '',
+  //     }; 
+  //     messageData.selectedFiles = fileData;
+  //     const docRef = await addDoc(threadMessagesRef, messageData);
+  //     this.threadControlService.setLastMessageId(docRef.id);
+  //     // this.resetInputdata();
+  //     this.resetTextAreaAttribute();
+  //     this.messageSent.emit();
+  //   } catch (error) {
+  //     console.error('Error sending message:', error);
+  //   }
+  // }
 
   // resetInputdata() {
   //   this.chatMessage = '';
@@ -298,11 +301,11 @@ export class DirectThreadInputComponent {
   // }  
   
 
-  async uploadFilesToFirebaseStorageDirectThread(): Promise<
+  async uploadFilesToFirebaseStorageChannelThread(): Promise<
   { url: string; type: string }[]
 > {
   const storage = this.storage;
-  const uploadPromises = this.global.selectThreadFiles.map(async (file:any, index:any) => {
+  const uploadPromises =  this.global.selectChannelThreadFiles.map(async (file:any, index:any) => {
     const filePath = `uploads/${new Date().getTime()}_${index}_${
       file.type.split('/')[1]
     }`;
@@ -499,39 +502,23 @@ export class DirectThreadInputComponent {
     );
   }
    
-  
-  onFileSelected(event: Event) {  
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      Array.from(input.files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.selectFiles.push({
-            type: file.type,
-            data: reader.result as string,
-          });
-          this.filesChangedChat.emit(this.selectFiles); 
-        };
-        reader.readAsDataURL(file);
-      });
-      input.value = '';
-    }
-  }    
 
-  onFileSelectedDirectThread(event: Event) {
+  onFileSelectedChannelThread(event: Event) {
     console.log('threadi hamar es ste em ')
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       Array.from(input.files).forEach((file) => {
         const reader = new FileReader();
         reader.onload = () => {
-          this.global.selectThreadFiles.push({
+          this.global.selectChannelThreadFiles.push({
             type: file.type,
             data: reader.result as string,
           });
-        };
+        }; 
         reader.readAsDataURL(file);
+        console.log(this.global.selectChannelThreadFiles)
       });
+     
       input.value = '';
     }
   }
@@ -543,6 +530,10 @@ export class DirectThreadInputComponent {
   resetTextAreaAttribute():void{
         this.chatMessage = '';
         this.formattedChatMessage = '';
-        this.global.selectThreadFiles=[];
+        this.global.selectChannelThreadFiles=[];
       }
+
+
+
+
 }

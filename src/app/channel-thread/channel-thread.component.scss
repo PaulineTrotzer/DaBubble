@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
 .thread {
@@ -397,4 +398,118 @@ form {
 .edit-button {
   font-size: 12px;
   padding: 6px 12px !important;
+}
+ 
+
+.show-file-main{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  position: absolute;
+  top: 77%;
+  left: 3%;
+  z-index: 1000;
+}
+
+.file-info-box{
+      display: flex;
+      width: 115px;
+      justify-content: center;
+      height: 59px;
+      align-items: center;
+      border-radius: 20px;
+      cursor: pointer;
+    
+      &:hover{
+      background-color: #eceefe;
+
+
+     span{
+      color: #444df2;
+    }
+
+  }
+  img{
+    width: 50px;
+    height: 50px;
+  } 
+}   
+
+.file-seperate-box{
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+}  
+
+
+.delet-seperate-box{
+  position: relative;
+  top: -6px;
+}
+ 
+.delete-seperate-span{
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.file-box{
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+     
+    
+.delete-span{
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.file-info-mix-box{
+      display: flex;
+      max-width: max-content;
+      justify-content: center;
+      height: 59px;
+      align-items: center;
+      border-radius: 20px;
+      cursor: pointer;
+  
+  &:hover{
+    background-color: #eceefe;
+  .delete-span{
+      color: #444df2;
+    }
+
+  }
+  img{
+    width: 50px;
+    height: 50px;
+  }
+}
+
+
+.mix-file{
+  position: relative;
+  top: -6px;
+  display: flex;
+  flex-direction: column;
+} 
+
+.show-selected-files {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.file-info {
+  img {
+    width: 100px;
+    height: 100px;
+  }
+  &:hover {
+    img {
+      transform: scale(1.2);
+    }
+  }
 }

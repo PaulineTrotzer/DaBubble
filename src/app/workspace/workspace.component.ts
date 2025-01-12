@@ -136,8 +136,6 @@ selectUser(user: any) {
    this.hiddenVoolThreadBox();
    this.checkWidtSize();
    this.cheackChatOpen();
-   this.global.selectedFilesChannel=false;
-   this.global.selectedFilesChat=true;
 }   
 
 openvollWidtChannelOrUserBox() {
@@ -276,8 +274,6 @@ checkWidtSize(){
     this.hiddenVoolThreadBox();
     this.checkWidtSize();
     this.cheackChatOpen();
-    this.global.selectedFilesChat=false;
-    this.global.selectedFilesChannel=true;
   }
 
   toggleChannelDrawer() {

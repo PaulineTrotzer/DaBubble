@@ -450,9 +450,7 @@ export class ChatComponent implements OnInit, OnChanges {
     }
   }
 
-  async openThread(messageId: any) {
-    this.global.selectedFilesChat=false; 
-    this.global.selectedFilesChannel=false; 
+  async openThread(messageId: any) { 
     try {
       this.threadOpened.emit();
       this.global.setCurrentThreadMessage(messageId);

@@ -29,6 +29,7 @@ import { FormsModule } from '@angular/forms';
 import { OverlayStatusService } from '../services/overlay-status.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MentionMessageBoxComponent } from '../mention-message-box/mention-message-box.component';
+import { ChannelThreadInputComponent } from "../channel-thread-input/channel-thread-input.component";
 
 interface Message {
   id: string;
@@ -37,7 +38,8 @@ interface Message {
   timestamp: Date;
   senderName: string;
   senderPicture: string;
-  reactions: { [emoji: string]: string[] };
+  reactions: { [emoji: string]: string[]  };
+  selectedFiles:any[]
 }
 
 @Component({
@@ -49,7 +51,8 @@ interface Message {
     PickerComponent,
     FormsModule,
     MentionMessageBoxComponent,
-  ],
+    ChannelThreadInputComponent
+],
   templateUrl: './channel-thread.component.html',
   styleUrl: './channel-thread.component.scss',
   animations: [
@@ -543,7 +546,9 @@ export class ChannelThreadComponent implements OnInit {
   }
 
 
-  
+  deleteFile(index: number) {
+    this.global.selectChannelThreadFiles.splice(index, 1);
+  } 
 
 
 }

@@ -30,11 +30,11 @@ export class GlobalVariableService {
 
 
   
-  selectedFilesChat:boolean=false; 
-  selectedFilesChannel:boolean=false; 
+  // selectedFilesChat:boolean=false; 
+  // selectedFilesChannel:boolean=false; 
   
-  selectThreadFiles:any=[]
-   
+  selectThreadFiles:any=[];
+  selectChannelThreadFiles:any=[]; 
 
 
   private welcomeChannelSubject = new BehaviorSubject<boolean>(false);

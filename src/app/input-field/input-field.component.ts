@@ -121,14 +121,14 @@ export class InputFieldComponent implements OnInit, OnChanges {
     if (this.chatMessage.trim() === '' && this.selectFiles.length === 0) {
       console.warn('Keine Nachricht und keine Dateien zum Senden.');
       return;
-    }
+    } 
+
     if (!this.selectedChannel && !this.selectedUser?.id) {
       console.error('Kein Benutzer oder Kanal ausgewählt.');
       return;
     }
     this.formattedMessage = '';
     this.processSendMessage();
-    
   }
 
   shouldSendMessage(event: KeyboardEvent): boolean {
@@ -152,10 +152,11 @@ export class InputFieldComponent implements OnInit, OnChanges {
     //   await this.sendDirectThreadMessage();
     //   await this.setMessageCount();
     // } 
-     else if (this.isChannelThreadOpen) {
-      await this.sendChannelThreadMessage();
-     
-    } else {
+    //  else if (this.isChannelThreadOpen) {
+    //   await this.sendChannelThreadMessage();
+    // }  
+    
+    else {
       try {
         const fileData = await this.uploadFilesToFirebaseStorage();
         const messageData = this.messageData(
@@ -178,77 +179,77 @@ export class InputFieldComponent implements OnInit, OnChanges {
     }
   }
 
-  async sendChannelThreadMessage() {
-    if (!this.currentChannelThreadId || this.chatMessage.trim() === '') {
-      console.warn('Thread is not open or message is empty');
-      return;
-    }
-    try {
-      const threadRef = collection(
-        this.firestore,
-        'channels',
-        this.selectedChannel.id,
-        'messages',
-        this.currentChannelThreadId,
-        'thread'
-      );
-      const messageData = {
-        text: this.chatMessage,
-        senderId: this.global.currentUserData.id,
-        senderName: this.global.currentUserData.name,
-        senderPicture: this.global.currentUserData.picture || '',
-        timestamp: new Date(),
-        selectedFiles: this.selectFiles,
-      };
-      await addDoc(threadRef, messageData);
-      this.resetInputdata();
-      this.resetTextAreaAttribute();
-      this.messageSent.emit();
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // async sendChannelThreadMessage() {
+  //   if (!this.currentChannelThreadId || this.chatMessage.trim() === '') {
+  //     console.warn('Thread is not open or message is empty');
+  //     return;
+  //   }
+  //   try {
+  //     const threadRef = collection(
+  //       this.firestore,
+  //       'channels',
+  //       this.selectedChannel.id,
+  //       'messages',
+  //       this.currentChannelThreadId,
+  //       'thread'
+  //     );
+  //     const messageData = {
+  //       text: this.chatMessage,
+  //       senderId: this.global.currentUserData.id,
+  //       senderName: this.global.currentUserData.name,
+  //       senderPicture: this.global.currentUserData.picture || '',
+  //       timestamp: new Date(),
+  //       selectedFiles: this.selectFiles,
+  //     };
+  //     await addDoc(threadRef, messageData);
+  //     this.resetInputdata();
+  //     this.resetTextAreaAttribute();
+  //     this.messageSent.emit();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
-  async sendDirectThreadMessage() {
-    if (!this.isDirectThreadOpen || this.chatMessage.trim() === '') {
-      console.warn('Thread is not open or message is empty');
-      return;
-    }
-    if (!this.currentThreadMessageId) {
-      console.error('No current message selected.');
-      return;
-    }
+  // async sendDirectThreadMessage() {
+  //   if (!this.isDirectThreadOpen || this.chatMessage.trim() === '') {
+  //     console.warn('Thread is not open or message is empty');
+  //     return;
+  //   }
+  //   if (!this.currentThreadMessageId) {
+  //     console.error('No current message selected.');
+  //     return;
+  //   }
 
-    try {
-      const threadMessagesRef = collection(
-        this.firestore,
-        `messages/${this.currentThreadMessageId}/threadMessages`
-      );
-      const messageData = {
-        text: this.chatMessage,
-        senderId: this.global.currentUserData.id,
-        senderName: this.global.currentUserData.name,
-        senderPicture: this.global.currentUserData.picture || '',
-        timestamp: new Date(),
-        selectedFiles: this.selectFiles,
-        editedTextShow: false,
-        recipientId: this.selectedUser.uid,
-        recipientName: this.selectedUser.name,
-        reactions: '',
-      };
-      const docRef = await addDoc(threadMessagesRef, messageData);
-      this.threadControlService.setLastMessageId(docRef.id);
-      this.resetInputdata();
-      this.messageSent.emit();
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  }
+  //   try {
+  //     const threadMessagesRef = collection(
+  //       this.firestore,
+  //       `messages/${this.currentThreadMessageId}/threadMessages`
+  //     );
+  //     const messageData = {
+  //       text: this.chatMessage,
+  //       senderId: this.global.currentUserData.id,
+  //       senderName: this.global.currentUserData.name,
+  //       senderPicture: this.global.currentUserData.picture || '',
+  //       timestamp: new Date(),
+  //       selectedFiles: this.selectFiles,
+  //       editedTextShow: false,
+  //       recipientId: this.selectedUser.uid,
+  //       recipientName: this.selectedUser.name,
+  //       reactions: '',
+  //     };
+  //     const docRef = await addDoc(threadMessagesRef, messageData);
+  //     this.threadControlService.setLastMessageId(docRef.id);
+  //     this.resetInputdata();
+  //     this.messageSent.emit();
+  //   } catch (error) {
+  //     console.error('Error sending message:', error);
+  //   }
+  // }
 
-  resetInputdata() {
-    this.chatMessage = '';
-    this.selectFiles = [];
-  }
+  // resetInputdata() {
+  //   this.chatMessage = '';
+  //   this.selectFiles = [];
+  // }
 
   async setMessageCount() {
     try {
@@ -256,20 +257,6 @@ export class InputFieldComponent implements OnInit, OnChanges {
         console.error('User ID or selected user ID is missing.');
         return;
       }
-      // const currentUserDocRef = doc(this.firestore, 'roomStatus', this.userId);
-      // const clickedUserDocRef = doc(this.firestore, 'roomStatus', this.selectedUser.id);
-      // const [currentUserStatus, clickedUserStatus] = await Promise.all([
-      //   getDoc(currentUserDocRef),
-      //   getDoc(clickedUserDocRef),
-      // ]);
-      // if (currentUserStatus.exists() && clickedUserStatus.exists()) {
-      //   const currentUserInRoom = currentUserStatus.data()['isInRoom'];
-      //   const clickedUserInRoom = clickedUserStatus.data()['isInRoom'];
-      //   if (currentUserInRoom && clickedUserInRoom) {
-      //     console.log('Beide Benutzer sind im selben Raum. Nachrichtenzähler wird nicht erhöht.');
-      //     return;
-      //   }
-      // }
       const messageCountDocRef = doc(
         this.firestore,
         'messageCounts',
@@ -308,20 +295,19 @@ export class InputFieldComponent implements OnInit, OnChanges {
     return await Promise.all(uploadPromises);
   }  
 
-
-  
-   
-
   handleNewThreadMessage(threadMessageId: string) {
     this.currentThreadMessageId = threadMessageId;
     this.threadControlService.setCurrentThreadMessageId(threadMessageId);
   }
 
   async sendChannelMessage() {
-    if (!this.selectedChannel || this.chatMessage.trim() === '') {
+    if (!this.selectedChannel) {
       console.warn('Channel is not selected or message is empty');
       return;
-    }
+    } 
+    if (this.chatMessage.trim() === '' && this.selectFiles.length === 0) {
+      return;
+    } 
 
     const channelMessagesRef = collection(
       this.firestore,
@@ -345,7 +331,7 @@ export class InputFieldComponent implements OnInit, OnChanges {
     this.selectFiles = [];
     this.messageSent.emit();
     console.log(this.chatMessage);
-  }
+  }  
 
   messageData(
     chatMessage: string,
@@ -509,25 +495,6 @@ export class InputFieldComponent implements OnInit, OnChanges {
       date1.getFullYear() === date2.getFullYear()
     );
   }
-
-  // getConversationId(): string {
-  //   const ids = [this.global.currentUserData?.id, this.selectedUser?.id];
-  //   ids.sort();
-  //   return ids.join('_');
-  // } 
-      
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event: Event): void {
-  //   // this.global.selectedFilesChat=false; 
-  //   // this.global.selectedFilesChannel=false; 
-
-  //     if(!this.global.selectedFilesChannel && this.global.selectedFilesChat){
-  //           console.log('Du ur eir vor menq anum einq')
-  //     }
-
-
-
-  // }
    
   
   @Output() filesChangedChat = new EventEmitter<any[]>();
@@ -561,6 +528,4 @@ export class InputFieldComponent implements OnInit, OnChanges {
         this.selectFiles = []; 
         this.filesChangedChat.emit(this.selectFiles);
       }
-
-
 }
