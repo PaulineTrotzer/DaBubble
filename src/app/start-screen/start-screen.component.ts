@@ -75,7 +75,7 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedChannel: any;
   @Input() mentionUser: string = '';
   @Input() onHeaderUser: any;
-
+  @Input() onHeaderChannel: any;
   channelMembers: any[] = [];
   messagesData: any = [];
   commentImages: string[] = [
@@ -172,8 +172,6 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  @Input() onHeaderChannel: any;
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedUser'] && this.selectedUser) {
       this.global.channelSelected = false;
@@ -269,7 +267,6 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
       );
       onSnapshot(channelRef, async (snapshot) => {
         if (snapshot.exists()) {
-          console.log('aram');
           const data = snapshot.data() as ChannelData;
           const userIds = data['userIds'];
           const membersPromises = userIds.map(async (userId: string) => {
