@@ -89,6 +89,7 @@ export class HomeComponent implements OnInit {
   }
 
   onUserSelected(user: any) {
+    this.selectedChannel = null;
     this.selectedUser = user;
     this.globalService.clearCurrentChannel();
   }

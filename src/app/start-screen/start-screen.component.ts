@@ -32,6 +32,7 @@ import { WelcomeSheetComponent } from '../welcome-sheet/welcome-sheet.component'
 import { Subscription } from 'rxjs';
 import { LoginAuthService } from '../services/login-auth.service';
 import { AuthService } from '../services/auth.service';
+import { SelectionService } from '../services/selection.service';
 
 interface ChannelData {
   userIds: string[];
@@ -45,10 +46,7 @@ interface ChannelData {
     MatButtonModule,
     CommonModule,
     FormsModule,
-    PeopleMentionComponent,
     DialogHeaderProfilCardComponent,
-    DialogEditChannelComponent,
-    DialogAddMemberComponent,
     ProfileContactCardComponent,
     ChatComponent,
     WelcomeSheetComponent,
@@ -76,6 +74,8 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mentionUser: string = '';
   @Input() onHeaderUser: any;
   @Input() onHeaderChannel: any;
+  @Output() userSelectedFromStartscreen = new EventEmitter<any>();
+  @Output() channelSelectedFromStartscreen = new EventEmitter<any>();
   channelMembers: any[] = [];
   messagesData: any = [];
   commentImages: string[] = [
@@ -108,7 +108,10 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   private guestLoginStatusSub: Subscription | undefined;
   loginAuthService = inject(LoginAuthService);
   enterChatByUser: any;
-
+  private subscriptions: Subscription[] = [];
+  selection = inject(SelectionService)
+  selectedUserSub: any;
+  selectedChannselSub: any;
 
   ngAfterViewChecked() {
     this.cdr.detectChanges();
@@ -122,6 +125,18 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
     this.subscribeToProfileSelection();
     this.subscribeToWelcomeChannel();
     this.subscribeToLoginStatus();
+    
+    this.subscriptions.push(
+      this.selection.selectedUser$.subscribe((user) => {
+        this.selectedUser = user;
+      })
+    );
+
+    this.subscriptions.push(
+      this.selection.selectedChannel$.subscribe((channel) => {
+        this.selectedChannel = channel;
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -134,6 +149,7 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
     if (this.welcomeChannelSubscription) {
       this.welcomeChannelSubscription.unsubscribe();
     }
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   private subscribeToProfileSelection(): void {
@@ -191,7 +207,6 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (changes['onHeaderUser'] && this.onHeaderUser) {
-      this.selectedChannel = null;
       this.onHeaderChannel = null;
       this.global.channelSelected = false;
       this.selectedUser = this.onHeaderUser;
@@ -339,8 +354,7 @@ export class StartScreenComponent implements OnInit, OnChanges, OnDestroy {
   onThreadOpened() {
     this.threadOpened.emit();
   }
-  @Output() userSelectedFromStartscreen = new EventEmitter<any>();
-  @Output() channelSelectedFromStartscreen = new EventEmitter<any>();
+  
 
   
   enterByUsername(user: any, isChannel: boolean = false) {

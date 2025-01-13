@@ -29,6 +29,7 @@ import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { LoginAuthService } from '../services/login-auth.service';
 import { Subscription } from 'rxjs';
+import { SelectionService } from '../services/selection.service';
 
 @Component({
   selector: 'app-workspace',
@@ -56,6 +57,7 @@ export class WorkspaceComponent implements OnInit {
   @Input() selectedUserHome: any;
   @Input() selectedChannelHome: any;
   readonly dialog = inject(MatDialog);
+  selection = inject(SelectionService)
   private channelsUnsubscribe: Unsubscribe | undefined;
   logInAuth = inject(LoginAuthService);
   isGuestLogin = false;
@@ -116,8 +118,10 @@ export class WorkspaceComponent implements OnInit {
   }
 
   selectUser(user: any) {
-    this.selectedUser = null;
     this.userSelected.emit(user);
+    this.selectedChannel = null;
+    this.selectedUser = user;
+    this.global.channelSelected = false;
     this.id = user.id;
     this.global.currentThreadMessageSubject.next('');
     this.global.channelThreadSubject.next(null);
@@ -138,6 +142,7 @@ export class WorkspaceComponent implements OnInit {
     this.hiddenVoolThreadBox();
     this.checkWidtSize();
     this.cheackChatOpen();
+    this.selection.setSelectedUser(user);
   }
 
   openvollWidtChannelOrUserBox() {
@@ -266,15 +271,14 @@ export class WorkspaceComponent implements OnInit {
   }
 
   async selectChannel(channel: any) {
-    this.selectedChannel = null;
+    this.channelSelected.emit(channel);
+    this.selectedUser = null;
+    this.selectedChannel = channel;
     const isMember = await this.global.checkChannelMembership(
       channel,
       this.global.currentUserData.id
     );
-    this.selectedUser = null;
-    this.selectedChannel = channel;
     this.global.channelSelected = true;
-    this.channelSelected.emit(channel);
     this.global.currentThreadMessageSubject.next('');
     this.global.channelThreadSubject.next(null);
     this.global.setCurrentChannel(channel);
@@ -282,6 +286,7 @@ export class WorkspaceComponent implements OnInit {
     this.hiddenVoolThreadBox();
     this.checkWidtSize();
     this.cheackChatOpen();
+    this.selection.setSelectedChannel(channel);
   }
 
   toggleChannelDrawer() {
