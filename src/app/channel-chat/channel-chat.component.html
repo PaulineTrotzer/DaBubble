@@ -92,28 +92,29 @@
               </ng-container>
             </div>
           </div>
-
+          
           <div class="reaction-info">
             <div class="thread-info-box" (click)="openThread(message.id)" *ngIf="message.replyCount">
               <p *ngIf="message.replyCount <= 1"> {{ message.replyCount }} Antwort</p>
               <p *ngIf="message.replyCount > 1"> {{ message.replyCount }} Antworten</p>
             </div>
             <div *ngIf="hasReactions(message.reactions) && hoveredReactionMessageId === message.id && hoveredEmoji" class="reaction-from-container"
-              [ngClass]="{
-                  'reaction-on-user':
-                    message.senderId !== global.currentUserData.id,
-                  'reaction-on-current':
-                    message.senderId === global.currentUserData.id
-                }">
+            [ngClass]="{
+              'reaction-on-user':
+              message.senderId !== global.currentUserData.id,
+              'reaction-on-current':
+              message.senderId === global.currentUserData.id
+            }">
               <span class="emoji-from">{{hoveredEmoji}}</span> <span class="reaction-text">{{ getReactionText(message,
                 hoveredEmoji) }}</span>
             </div>
             <span *ngFor="let reaction of message.reactions | keyvalue" class="reaction"
-              (mouseenter)="onReactionHover(message, reaction.key)"
-              (mouseleave)="hoveredReactionMessageId = null; hoveredEmoji = null"
-              (click)="addEmojiToMessage(reaction.key, message.id)">
-              {{ reaction.key }} {{ reaction.value.length }}
-            </span>
+            (mouseenter)="onReactionHover(message, reaction.key)"
+            (mouseleave)="hoveredReactionMessageId = null; hoveredEmoji = null"
+            (click)="addEmojiToMessage(reaction.key, message.id)">
+            {{ reaction.key }} {{ reaction.value.length }}
+          </span>
+          <span *ngIf="message.isEdited">(Bearbeited)</span>
             <!--               <div class="img-container" *ngIf="hasReactions(message.reactions)" (click)="togglePicker(message.id)">
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                   class="icon">

@@ -43,6 +43,7 @@ interface Message {
   reactions: { [emoji: string]: string[] };
   selectedFiles?: any[];
   replyCount: number;
+  isEdited: boolean;
 }
 
 @Component({
@@ -537,7 +538,16 @@ hiddenFullChannelOrUserThreadBox(){
         messageId
       );
 
-      await updateDoc(messageDocRef, { text: this.messageToEdit });
+      await updateDoc(messageDocRef, {
+         text: this.messageToEdit,
+         isEdited: true,
+         });
+
+         const messageIndex = this.messagesData.findIndex((msg) => msg.id === messageId);
+    if (messageIndex !== -1) {
+      this.messagesData[messageIndex].text = this.messageToEdit;
+      this.messagesData[messageIndex].isEdited = true;
+    }
 
       this.showEditArea = null;
       this.messageToEdit = '';
