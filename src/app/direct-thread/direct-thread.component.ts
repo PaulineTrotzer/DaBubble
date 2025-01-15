@@ -156,16 +156,6 @@ export class DirectThreadComponent implements OnInit {
     }
   }
 
-  displayDayInfo(index: number): boolean {
-    if (index === 0) return true;
-    const currentMessage = this.messagesData[index];
-    const previousMessage = this.messagesData[index - 1];
-    return !this.isSameDay(
-      new Date(currentMessage.timestamp),
-      new Date(previousMessage.timestamp)
-    );
-  }
-
   editMessages(message: any) {
     this.editWasClicked = true;
     this.editMessageId = message.id;
@@ -260,7 +250,6 @@ export class DirectThreadComponent implements OnInit {
         const editMessage = {
           text: this.editableMessageText,
           editedTextShow: true,
-          editedAt: new Date().toISOString(),
         };
         await updateDoc(messageRef, editMessage);
       }
@@ -282,29 +271,6 @@ export class DirectThreadComponent implements OnInit {
     const textarea = event.target as HTMLTextAreaElement;
     const height = (textarea.scrollTop = textarea.scrollHeight);
     this.scrollHeightInput = height;
-  }
-
-  getDayInfoForMessage(index: number): string {
-    const messageDate = new Date(this.messagesData[index].timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    if (this.isSameDay(messageDate, today)) {
-      return 'Heute';
-    } else if (this.isSameDay(messageDate, yesterday)) {
-      return 'Gestern';
-    } else {
-      return this.formatDate(messageDate);
-    }
-  }
-
-  isSameDay(date1: Date, date2: Date): boolean {
-    return (
-      date1.getDate() === date2.getDate() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getFullYear() === date2.getFullYear()
-    );
   }
 
   formatDate(date: Date): string {
