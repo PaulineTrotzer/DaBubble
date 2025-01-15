@@ -158,6 +158,7 @@
               " (click)="addEmojiToMessage(reaction.key, topicMessage.id)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
+            <span *ngIf="topicMessage.isEdited">(Bearbeited)</span>
             <!--             <div class="img-container" *ngIf="hasReactions(topicMessage?.reactions!)"
               (click)="togglePicker(topicMessage?.id!)">
               <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -209,7 +210,7 @@
               Speichern
             </button> -->
             <img class="cancel-icon" (click)="cancelEdit()" src="assets/img/cross.svg" alt="Abbrechen">
-            <img class="save-icon" (click)="saveEditedMessage(topicMessage?.id!)" src="assets/img/check-mark.svg"
+            <img class="save-icon" (click)="saveEditedMessage(message.id)" src="assets/img/check-mark.svg"
               alt="Speichern">
           </div>
         </form>
@@ -301,6 +302,7 @@
               " (click)="addEmojiToMessage(reaction.key, message.id!)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
+            <span *ngIf="message.isEdited">(Bearbeited)</span>
             <!--             <div class="img-container" *ngIf="hasReactions(message.reactions)" (click)="togglePicker(message.id)">
               <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                 class="icon">

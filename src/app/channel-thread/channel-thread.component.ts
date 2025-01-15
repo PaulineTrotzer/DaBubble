@@ -38,6 +38,7 @@ interface Message {
   senderName: string;
   senderPicture: string;
   reactions: { [emoji: string]: string[] };
+  isEdited: boolean;
 }
 
 @Component({
@@ -520,7 +521,10 @@ export class ChannelThreadComponent implements OnInit {
               messageId
             );
 
-      await updateDoc(messageDocRef, { text: this.messageToEdit });
+      await updateDoc(messageDocRef, { 
+        text: this.messageToEdit,
+        isEdited: true,
+       });
 
       this.showEditArea = null;
       this.messageToEdit = '';
