@@ -23,6 +23,7 @@ import {
   orderBy,
   setDoc,
   deleteDoc,
+  QuerySnapshot,
 } from '@angular/fire/firestore';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -36,12 +37,7 @@ import { Emoji } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { currentThreadMessage } from '../models/threadMessage.class';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
-import {
-  animate,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { MentionMessageBoxComponent } from '../mention-message-box/mention-message-box.component';
 
 @Component({
@@ -53,7 +49,7 @@ import { MentionMessageBoxComponent } from '../mention-message-box/mention-messa
     InputFieldComponent,
     FormsModule,
     MatCardModule,
-    MentionMessageBoxComponent
+    MentionMessageBoxComponent,
   ],
   templateUrl: './direct-thread.component.html',
   styleUrls: ['./direct-thread.component.scss'],
@@ -83,15 +79,18 @@ import { MentionMessageBoxComponent } from '../mention-message-box/mention-messa
   ],
 })
 export class DirectThreadComponent implements OnInit {
+  @Output() userSelectedFromDirectThread = new EventEmitter<any>();
   @Output() closeDirectThread = new EventEmitter<void>();
   @Input() selectedUser: any;
   @ViewChild('messageContainer') messageContainer!: ElementRef;
-  chatMessage: string = '';
-  showUserBubble: boolean = false;
   global = inject(GlobalVariableService);
-  currentUser: User = new User();
   firestore = inject(Firestore);
   userService = inject(UserService);
+  overlayStatusService = inject(OverlayStatusService);
+  threadControlService = inject(ThreadControlService);
+  chatMessage: string = '';
+  showUserBubble: boolean = false;
+  currentUser: User = new User();
   userID: any | null = null;
   messagesData: any[] = [];
   showOptionBar: { [key: string]: boolean } = {};
@@ -105,10 +104,8 @@ export class DirectThreadComponent implements OnInit {
     iconThird: 'assets/img/third.svg',
   };
   isDirectThreadOpen: boolean = true;
-  overlayStatusService = inject(OverlayStatusService);
   reactions: { [messageId: string]: any[] } = {};
   selectFiles: any[] = [];
-  threadControlService = inject(ThreadControlService);
   subscription = new Subscription();
   shouldScrollToBottom = false;
   firstInitialisedThreadMsg: string | null = null;
@@ -129,31 +126,65 @@ export class DirectThreadComponent implements OnInit {
   hoveredReactionIcon: boolean = false;
   wasClickedInDirectThread = false;
   getAllUsersName: any[] = [];
-  @Output() userSelectedFromDirectThread = new EventEmitter<any>();
+  topicMessage: any;
+  directMessageId: any;
+  messages: any[] = [];
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
-    await this.initializeUser();
-    await this.subscribeToThreadMessages();
-    await this.getAllUsersname();
-    this.checkLastMessageForScroll();
+    this.global.directThread$.subscribe((threadId) => {
+      if (threadId) {
+        this.directMessageId = threadId;
+        this.getTopic();
+        this.getAllUsersname();
+        this.loadThreadMessages();
+      }
+    });
     this.currentUserId = this.route.snapshot.paramMap.get('id');
+  }
+
+  async getTopic() {
+    return new Promise<void>((resolve) => {
+      const docRef = doc(this.firestore, 'messages', this.directMessageId);
+      onSnapshot(docRef, (doc) => {
+        const data = doc.data();
+        if (data) {
+          if (data['timestamp']?.seconds) {
+            data['timestamp'] = new Date(data['timestamp'].seconds * 1000);
+          }
+          this.topicMessage = { ...data, id: this.directMessageId };
+          resolve();
+        }
+      });
+    });
+  }
+
+  async loadThreadMessages() {
+    if (!this.directMessageId) {
+      console.log('No message selected!');
+      return;
+    }
+    const messageRef = collection(
+      this.firestore,
+      'messages',
+      this.directMessageId,
+      'threadMessages'
+    );
+
+    const q = query(messageRef, orderBy('timestamp', 'asc'));
+    onSnapshot(q, (querySnapshot: any) => {
+      this.messages = querySnapshot.docs.map((doc: any) => {
+        const data = doc.data();
+        if (data.timestamp && data.timestamp.seconds) {
+          data.timestamp = new Date(data.timestamp.seconds * 1000);
+        }
+        return { id: doc.id, ...data };
+      });
+    });
   }
 
   toggleEditOption(messageId: string, show: boolean) {
     this.showEditOption[messageId] = show;
-  }
-
-  checkLastMessageForScroll() {
-    this.threadControlService.lastMessageId$.subscribe((id) => {
-      if (id && id !== '0') {
-        this.scrollToLastMessage(id);
-      } else {
-      }
-    });
-    if (this.lastMessageId === '0') {
-      this.initializeLastMessageId();
-    }
   }
 
   editMessages(message: any) {
@@ -229,7 +260,6 @@ export class DirectThreadComponent implements OnInit {
     this.isFirstClick = true;
   }
 
-
   onCancelMessageBox(): void {
     this.wasClickedInDirectThread = false;
   }
@@ -283,7 +313,7 @@ export class DirectThreadComponent implements OnInit {
   async initializeLastMessageId(): Promise<void> {
     try {
       await this.threadControlService.initializeLastMessageId(
-        this.global.currentThreadMessageSubject.value
+        this.global.directThreadSubject.value
       );
     } catch (error) {
       console.error('fehler beim Initialisieren der lastMessageId:', error);
@@ -318,16 +348,6 @@ export class DirectThreadComponent implements OnInit {
     this.showReactionPopUpBoth[messageId] = show;
   }
 
-  async subscribeToThreadMessages() {
-    this.threadControlService.firstThreadMessageId$.subscribe(
-      async (firstInitialisedThreadMsg) => {
-        if (firstInitialisedThreadMsg) {
-          await this.processThreadMessages(firstInitialisedThreadMsg);
-        }
-      }
-    );
-  }
-
   getUserIds(reactions: {
     [key: string]: { emoji: string; counter: number };
   }): string[] {
@@ -340,15 +360,6 @@ export class DirectThreadComponent implements OnInit {
     }
   }
 
-  async initializeUser() {
-    this.route.paramMap.subscribe(async (paramMap) => {
-      const userID = paramMap.get('id');
-      if (userID) {
-        await this.loadCurrentUser(userID);
-      }
-    });
-  }
-
   async loadCurrentUser(userID: string) {
     try {
       const userResult = await this.userService.getUser(userID);
@@ -357,16 +368,6 @@ export class DirectThreadComponent implements OnInit {
       }
     } catch (error) {
       console.error('Fehler beim Laden des Benutzers:', error);
-    }
-  }
-
-  async processThreadMessages(firstInitialisedThreadMsg: string) {
-    this.firstInitialisedThreadMsg = firstInitialisedThreadMsg;
-    if (this.firstInitialisedThreadMsg) {
-      await this.handleFirstThreadMessageAndPush(
-        this.firstInitialisedThreadMsg
-      );
-      await this.getThreadMessages(this.firstInitialisedThreadMsg);
     }
   }
 
@@ -383,7 +384,7 @@ export class DirectThreadComponent implements OnInit {
         if (docData?.['firstMessageCreated']) {
           this.currentThreadMessage = {
             id: docSnapshot.id,
-            ...docData, 
+            ...docData,
           };
           return;
         }
@@ -399,20 +400,16 @@ export class DirectThreadComponent implements OnInit {
       );
       await this.settingDataforFireBase(
         threadMessagesRef,
-        this.currentThreadMessage 
+        this.currentThreadMessage
       );
     } catch (error) {
       console.error('Fehler der Thread-Nachricht:', error);
     }
   }
-  
 
-  async settingDataforFireBase(
-    threadMessagesRef: any,
-    threadMessageData: any 
-  ) {
+  async settingDataforFireBase(threadMessagesRef: any, threadMessageData: any) {
     try {
-/*       if (
+      /*       if (
         !this.selectedUser ||
         !this.selectedUser.uid ||
         !this.global.currentUserData
@@ -438,40 +435,12 @@ export class DirectThreadComponent implements OnInit {
         firstMessageCreated: true,
         reactions: '',
       };
-  
+
       const docRef = await addDoc(threadMessagesRef, messageData);
       console.log('Erstellte Nachricht-ID:', docRef.id);
       this.threadControlService.setLastMessageId(docRef.id);
     } catch (error) {
       console.error('Fehler beim Hinzufügen der Nachricht:', error);
-    }
-  }
-  
-
-  async getThreadMessages(messageId: any) {
-    try {
-      const threadMessagesRef = collection(
-        this.firestore,
-        `messages/${messageId}/threadMessages`
-      );
-      const q = query(threadMessagesRef, orderBy('timestamp', 'asc'));
-      onSnapshot(q, (querySnapshot) => {
-        console.log(querySnapshot.docs.map((doc) => doc.data()));
-        this.messagesData = querySnapshot.docs.map((doc) => {
-          const messageData = doc.data();
-          if (messageData['timestamp'] && messageData['timestamp'].toDate) {
-            messageData['timestamp'] = messageData['timestamp'].toDate();
-          }
-          return {
-            id: doc.id,
-            ...messageData,
-          };
-        });
-        this.shouldScrollToBottom = true;
-        this.cdr.detectChanges();
-      });
-    } catch (error) {
-      console.error('fehler getMessagws', error);
     }
   }
 
@@ -688,26 +657,26 @@ export class DirectThreadComponent implements OnInit {
   onClose() {
     this.toggleThreadStatus(false);
     this.closeDirectThread.emit();
-    this.global.currentThreadMessageSubject.next(null);
+    this.global.directThreadSubject.next(null);
     this.closeThreadVollWidth();
     this.closeThreadResponsive();
   }
 
-
-  closeThreadResponsive():void{
-    if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
-      this.global.openChannelOrUserThread=false;
-      this.global.openChannelorUserBox=true;
+  closeThreadResponsive(): void {
+    if (window.innerWidth <= 1200 && this.global.openChannelOrUserThread) {
+      this.global.openChannelOrUserThread = false;
+      this.global.openChannelorUserBox = true;
     }
-    } 
-  
-   closeThreadVollWidth(){
-    if(window.innerWidth<=1900 && window.innerWidth>1200 && this.global.checkWideChannelOrUserThreadBox){
-      this.global.checkWideChannelOrUserThreadBox=false;
-      this.global.checkWideChannelorUserBox=true;
-    }
-   }  
-
-
-   
   }
+
+  closeThreadVollWidth() {
+    if (
+      window.innerWidth <= 1900 &&
+      window.innerWidth > 1200 &&
+      this.global.checkWideChannelOrUserThreadBox
+    ) {
+      this.global.checkWideChannelOrUserThreadBox = false;
+      this.global.checkWideChannelorUserBox = true;
+    }
+  }
+}

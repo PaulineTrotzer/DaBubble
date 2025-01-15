@@ -122,7 +122,7 @@ export class WorkspaceComponent implements OnInit {
 selectUser(user: any) {
   this.userSelected.emit(user);
   this.id = user.id;
-  this.global.currentThreadMessageSubject.next('');
+  this.global.directThreadSubject.next('');
   this.global.channelThreadSubject.next(null);
   const actuallyId = this.id;
   if (this.userId && this.messageCountsArr?.messageCount && this.messageCountsArr.messageCount[actuallyId] > 0) {
@@ -267,7 +267,7 @@ checkWidtSize(){
     this.selectedChannel = channel;
     this.global.channelSelected = true;
     this.channelSelected.emit(channel);
-    this.global.currentThreadMessageSubject.next('');
+    this.global.directThreadSubject.next('');
     this.global.channelThreadSubject.next(null);
     this.global.setCurrentChannel(channel);
     this.openvollWidtChannelOrUserBox();

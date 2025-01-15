@@ -440,25 +440,10 @@ export class ChatComponent implements OnInit, OnChanges {
     }
   }
 
-  async openThread(messageId: any) {
-    try {
-      this.threadOpened.emit();
-      this.global.setCurrentThreadMessage(messageId);
-      this.chosenThreadMessage = messageId;
-      this.threadControlService.setFirstThreadMessageId(messageId);
-      const threadMessagesRef = collection(
-        this.firestore,
-        `messages/${messageId}/threadMessages`
-      );
-      const snapshot = await getDocs(threadMessagesRef);
-      if (snapshot.empty) {
-        const docRef = doc(this.firestore, 'messages', messageId);
-        await setDoc(docRef, { firstMessageCreated: false }, { merge: true });
-      }
-    } catch (error) {
-      console.error('Fehler beim Öffnen des Threads:', error);
-    }
-
+  openThread(messageId: any) {
+    this.threadOpened.emit();
+    this.global.setDirectThread(messageId);
+    console.log('From openThread...',messageId)
     this.openvollThreadBox();
     this.hiddenFullChannelOrUserThreadBox();
     this.checkWidthSize();
