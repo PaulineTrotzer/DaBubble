@@ -29,7 +29,7 @@
 
     
 
-    <div class="topic-container" *ngIf="topicMessage" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false">
+    <div class="topic-container" *ngIf="topicMessage" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false; showEditDialog = null;">
       <div class="edit-message-container" *ngIf="showEditArea === topicMessage.id">
         <form>
           <div class="img-container textarea" (click)="togglePicker(topicMessage.id, true)">
@@ -154,7 +154,7 @@
             </div>
             <span *ngFor="let reaction of topicMessage.reactions | keyvalue" class="reaction"
               (mouseenter)="onReactionHover(topicMessage!, reaction.key)" (mouseleave)="
-                hoveredReactionMessageId = null; hoveredEmoji = null
+                hoveredReactionMessageId = null; hoveredEmoji = null;
               " (click)="addEmojiToMessage(reaction.key, topicMessage.id)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
@@ -182,7 +182,7 @@
       <h3 *ngIf="messages.length > 1">{{ messages.length }} Antworten</h3>
       <div class="line"></div>
     </div>
-    <div class="answers-container" (mouseenter)="hoveredMessageId = message.id" (mouseleave)="hoveredMessageId = null"
+    <div class="answers-container" (mouseenter)="hoveredMessageId = message.id" (mouseleave)="hoveredMessageId = null; showEditDialog = null"
       *ngFor="let message of messages">
       <div class="edit-message-container" *ngIf="showEditArea === message.id">
         <form>
