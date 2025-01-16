@@ -60,35 +60,41 @@
               'topic-from-current': topicMessage.senderId === global.currentUserData.id
             }"
           >
-            <div class="partner-message-header" [ngClass]="{
-              'message-header-from-cu': topicMessage.senderId === global.currentUserData.id
+            <div class="topic-text-container" [ngClass]="{
+              'topic-text-container-currentuser': topicMessage.senderId === global.currentUserData.id
             }">
               <div class="avatar-container">
                 <img
                   [src]="topicMessage.senderPicture"
                 />
               </div>
-              <h4>{{ topicMessage.senderName }}</h4>
-              <span class="message-time"
-                >{{ topicMessage.timestamp | date : "HH:mm" }} Uhr</span
-              >
-            </div>
-            <div>
-              <!--               <p>{{ message.text }}</p> -->
-              <ng-container
-                *ngFor="let mentionName of splitMessage(topicMessage.text)"
-              >
-                <span
-                  *ngIf="isMention(mentionName)"
-                  class="mention-message"
-                  (click)="handleMentionClick(mentionName)"
+              <div class="topic-text-content" [ngClass]="{
+                'topic-text-content-currentuser': topicMessage.senderId === global.currentUserData.id
+              }">
+                <div class="topic-message-header" [ngClass]="{
+                  'message-header-from-cu': topicMessage.senderId === global.currentUserData.id
+                }">
+                  <h4>{{ topicMessage.senderName }}</h4>
+                  <span class="message-time"
+                    >{{ topicMessage.timestamp | date : "HH:mm" }} Uhr</span
+                  >
+                </div>
+                <ng-container
+                  *ngFor="let mentionName of splitMessage(topicMessage.text)"
                 >
-                  {{ mentionName }}
-                </span>
-                <span *ngIf="!isMention(mentionName)">{{ mentionName }}</span>
-              </ng-container>
-            </div>
-
+                  <span
+                    *ngIf="isMention(mentionName)"
+                    class="mention-message"
+                    (click)="handleMentionClick(mentionName)"
+                  >
+                    {{ mentionName }}
+                  </span>
+                  <span class="topic-message" [ngClass]="{
+                    'topic-message-from-current': topicMessage.senderId === global.currentUserData.id
+                  }" *ngIf="!isMention(mentionName)">{{ mentionName }}</span>
+                </ng-container>
+              </div>
+            </div>           
             <div class="sticker-hover-ct" *ngIf="showOptionBar[topicMessage.id]">
               <div class="show-set" @slideIn>
                 <div class="img-flex-bar-options">

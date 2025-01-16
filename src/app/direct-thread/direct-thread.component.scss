@@ -598,10 +598,42 @@ h3 {
   line-height: 19.1px;
   color: #686868;
   position: relative;
-  left: 8px;
 }
 
-.partner-message-header {
+.topic-text-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.topic-text-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.topic-text-content-currentuser {
+  align-items: flex-end;
+}
+
+.topic-text-container-currentuser {
+  flex-direction: row-reverse;
+}
+
+.topic-message {
+  display: flex;
+  padding: 15px;
+}
+
+.topic-message-from-current {
+  justify-content: flex-end;
+  background-color: #797EF3;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: white;
+}
+
+.topic-message-header {
   display: flex;
   align-items: center;
   gap: 16px;
