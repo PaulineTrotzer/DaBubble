@@ -181,6 +181,7 @@ export class DirectThreadComponent implements OnInit {
         return { id: doc.id, ...data };
       });
     });
+    console.log(this.messages)
   }
 
   toggleEditOption(messageId: string, show: boolean) {

@@ -296,11 +296,8 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px 0;
-  margin: 16px 0;
   max-height: 500px;
   height: 100%;
-
 }
 
 .reaction-icon-container-editMode {
@@ -495,19 +492,18 @@ h3 {
   }
 }
 
-.cancel-icon{
+.cancel-icon {
   object-fit: contain;
   width: 22px;
   padding: 3px;
   &:hover {
     background-color: #eceefe;
     border-radius: 50px;
-  } 
+  }
 }
 
 .message-holder {
   position: relative;
-  padding: 15px 0 10px 0;
 }
 
 .message-content-bubble {
@@ -559,7 +555,7 @@ h3 {
   border-bottom-right-radius: 20px;
 }
 
-.cu-message-header {
+.answer-message-header {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -577,10 +573,52 @@ h3 {
   }
 }
 
-.cu-message-container {
+.answer-text-container {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 0 10px 40px;
+  gap: 16px;
+  &:hover {
+    background-color: #eceefe;
+  }
+}
+
+.answer-text-container-currentuser {
+  flex-direction: row-reverse;
+  padding: 10px 40px 10px 0;
+}
+
+.answer-message-header-currentuser {
+  flex-direction: row-reverse;
+}
+
+.answer-text-content {
   display: flex;
   flex-direction: column;
-  margin: 16px 0;
+}
+
+.answer-text-content-currentuser {
+  align-items: flex-end;
+}
+
+.answer-text {
+  display: flex;
+  padding: 15px;
+  background-color: #eceefe;
+}
+
+.answer-text-user {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.answer-text-currentuser {
+  background-color: #797ef3;
+  color: white;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .message-text {
@@ -606,6 +644,13 @@ h3 {
   gap: 16px;
 }
 
+.topic-message-container {
+  padding: 10px 40px 10px 0;
+  &:hover {
+    background-color: #eceefe;
+  }
+}
+
 .topic-text-content {
   display: flex;
   flex-direction: column;
@@ -626,7 +671,7 @@ h3 {
 
 .topic-message-from-current {
   justify-content: flex-end;
-  background-color: #797EF3;
+  background-color: #797ef3;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -734,16 +779,14 @@ svg {
   cursor: pointer;
 }
 
-
-@media(max-width:1900px){
-  .full-page-content.hidden-width{
+@media (max-width: 1900px) {
+  .full-page-content.hidden-width {
     width: unset;
   }
 }
 
-@media (max-width:1200px){
-  .full-page-content.reset-width{
+@media (max-width: 1200px) {
+  .full-page-content.reset-width {
     width: unset;
   }
-
 }
