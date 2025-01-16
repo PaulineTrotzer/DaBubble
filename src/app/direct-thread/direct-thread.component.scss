@@ -642,10 +642,10 @@ h3 {
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  padding: 10px 0 10px 40px;
 }
 
 .topic-message-container {
-  padding: 10px 40px 10px 0;
   &:hover {
     background-color: #eceefe;
   }
@@ -661,12 +661,20 @@ h3 {
 }
 
 .topic-text-container-currentuser {
+  padding: 10px 40px 10px 0;
   flex-direction: row-reverse;
 }
 
 .topic-message {
   display: flex;
   padding: 15px;
+  background-color: #eceefe;
+}
+
+.topic-message-user {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
 }
 
 .topic-message-from-current {

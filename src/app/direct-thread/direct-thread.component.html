@@ -90,7 +90,8 @@
                     {{ mentionName }}
                   </span>
                   <span class="topic-message" [ngClass]="{
-                    'topic-message-from-current': topicMessage.senderId === global.currentUserData.id
+                    'topic-message-from-current': topicMessage.senderId === global.currentUserData.id,
+                    'topic-message-user': topicMessage.senderId !== global.currentUserData.id
                   }" *ngIf="!isMention(mentionName)">{{ mentionName }}</span>
                 </ng-container>
               </div>
