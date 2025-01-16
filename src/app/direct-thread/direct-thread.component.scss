@@ -583,6 +583,12 @@ h3 {
   }
 }
 
+.answer-message-container {
+  &:hover .answer-text-user {
+    background-color: white;
+  }
+}
+
 .answer-text-container-currentuser {
   flex-direction: row-reverse;
   padding: 10px 40px 10px 0;
@@ -648,6 +654,9 @@ h3 {
 .topic-message-container {
   &:hover {
     background-color: #eceefe;
+  }
+  &:hover .topic-message-user {
+    background-color: white;
   }
 }
 
