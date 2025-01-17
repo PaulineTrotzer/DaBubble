@@ -122,15 +122,16 @@ export class DirectThreadComponent implements OnInit {
   editableMessageText: string = '';
   scrollHeightInput: any;
   editWasClicked = false;
-  showEditOption: { [messageId: string]: boolean } = {};
+  showEditOption: boolean = true;
   hoveredReactionIcon: boolean = false;
   wasClickedInDirectThread = false;
   getAllUsersName: any[] = [];
   topicMessage: any;
   directMessageId: any;
   messages: any[] = [];
-  showTopicBar: boolean = true;
-  showAnswerBar: boolean = true;
+  showTopicBar: boolean = false;
+  showAnswerBar: string | null = null;
+  showEditDialog: string | null = null;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
@@ -186,8 +187,8 @@ export class DirectThreadComponent implements OnInit {
     console.log(this.messages)
   }
 
-  toggleEditOption(messageId: string, show: boolean) {
-    this.showEditOption[messageId] = show;
+  toggleEditOption(messageId: string) {
+    this.showEditDialog = this.showEditDialog === messageId ? null : messageId;
   }
 
   editMessages(message: any) {

@@ -17,14 +17,15 @@
 }
 
 .mat-mdc-card {
+  z-index: 10;
+  left: 84px;
+  top: 25px;
   border-style: none;
   border-top-right-radius: 30px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   position: absolute;
-  left: 100px;
-  top: 34px;
   width: fit-content;
   white-space: nowrap;
   font-size: 14px;
@@ -586,6 +587,7 @@ h3 {
 }
 
 .answer-message-container {
+  position: relative;
   &:hover .answer-text-user {
     background-color: white;
   }

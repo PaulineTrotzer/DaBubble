@@ -60,6 +60,7 @@
               'topic-from-current': topicMessage.senderId === global.currentUserData.id
             }"
             (mouseenter)="showTopicBar = true"
+            (mouseleave)="showTopicBar = false"
           >
             <div class="topic-text-container" [ngClass]="{
               'topic-text-container-currentuser': topicMessage.senderId === global.currentUserData.id
@@ -102,7 +103,7 @@
                 <div class="img-flex-bar-options">
                   <div
                     class="edit-icon-holder"
-                    (mouseenter)="toggleEditOption(topicMessage.id, true)"
+                    (click)="toggleEditOption(topicMessage.id)"
                   >
                     <svg
                       width="40"
@@ -189,34 +190,35 @@
             <h3>Antwort</h3>
             <div class="line"></div>
           </div>
-          <div *ngFor="let message of messages">
-  
-            <mat-card
-              *ngIf="showEditOption[message.id]"
+          <div *ngFor="let message of messages">  
+            <div
+              class="answer-message-container"
+              (mouseenter)="showAnswerBar = message.id"
+              (mouseleave)="showAnswerBar = null; showEditDialog = null"
+              
+            >
+            <div class="sticker-hover-ct" *ngIf="showAnswerBar === message.id">
+              <mat-card
+              *ngIf="showEditDialog === message.id"
               class="edit-messages-card"
               appearance="outlined"
-              (mouseleave)="toggleEditOption(message.id, false)"
+              (click)="toggleEditOption(message.id)"
             >
               <mat-card-content
+                *ngIf="message.senderId === global.currentUserData.id"
                 class="edit-message-content"
-                (mouseleave)="toggleEditOption(message.id, false)"
+                (mouseleave)="toggleEditOption(message.id)"
               >
-                <span *ngIf="!editWasClicked" (click)="editMessages(message)"
+                <span  (click)="editMessages(message)"
                   >Nachricht bearbeiten</span
                 >
               </mat-card-content>
             </mat-card>
-  
-            <div
-              class="answer-message-container"
-              (mouseenter)="showAnswerBar = true"
-            >
-            <div class="sticker-hover-ct" *ngIf="showAnswerBar">
               <div class="show-set-reverse" @slideIn>
                 <div class="img-flex-bar-options">
                   <div
                     class="edit-icon-holder"
-                    (mouseenter)="toggleEditOption(message.id, true)"
+                    (click)="toggleEditOption(message.id)"
                   >
                     <svg
                       width="40"
@@ -248,7 +250,7 @@
   
                   <div
                     class="add-reaction-cu-ct"
-                    (mouseenter)="toggleEditOption(message.id, false)"
+                    (mouseenter)="toggleEditOption(message.id)"
                     (click)="openEmojiPicker()"
                   >
                     <svg
