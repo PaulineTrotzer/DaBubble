@@ -277,7 +277,7 @@
                   <div class="emoji-picker">
                     <emoji-mart
                       (emojiClick)="
-                        addEmoji($event, topicMessage.id, currentUser.uid)
+                        addEmoji($event, topicMessage.id, global.currentUserData.id)
                       "
                       class="emoji-picker"
                       size="18"
@@ -407,7 +407,7 @@
                     <div class="emoji-picker">
                       <emoji-mart
                         (emojiClick)="
-                          addEmoji($event, message.id, currentUser.uid)
+                          addEmoji($event, message.id, global.currentUserData.id)
                         "
                         class="emoji-picker"
                         size="18"

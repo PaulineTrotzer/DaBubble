@@ -576,7 +576,7 @@ export class DirectThreadComponent implements OnInit {
       if (Object.keys(threadMessageData['reactions']).length === 0) {
         throw new Error('Reactions object is empty.');
       }
-  
+      console.log(threadMessageData['reactions'])
       await updateDoc(threadMessageRef, {
         reactions: threadMessageData['reactions'],
       });
