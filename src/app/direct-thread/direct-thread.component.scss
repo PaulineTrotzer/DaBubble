@@ -127,14 +127,14 @@
 
 .show-set {
   position: absolute;
-  right: 20px;
+  left: 0;
   border: 1px solid #adb0d9;
   background-color: white;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 0;
-  top: -22px;
+  top: -11px;
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
@@ -230,14 +230,12 @@
 
 .show-set-reverse {
   position: absolute;
-  left: 25px;
   border: 1px solid #adb0d9;
   background-color: white;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 0;
-  top: 0;
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
@@ -320,6 +318,10 @@ h3 {
       }
     }
   }
+}
+
+.add-reaction {
+  display: flex;
 }
 
 .add-reaction-cu-ct {
@@ -471,7 +473,7 @@ h3 {
 .topic-message-container {
   display: flex;
   flex-direction: column;
-  margin: 16px 0;
+  margin: 32px 0;
 }
 
 .option-flex {
@@ -652,6 +654,7 @@ h3 {
 }
 
 .topic-message-container {
+  position: relative;
   &:hover {
     background-color: #eceefe;
   }

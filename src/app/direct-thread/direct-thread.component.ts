@@ -129,6 +129,8 @@ export class DirectThreadComponent implements OnInit {
   topicMessage: any;
   directMessageId: any;
   messages: any[] = [];
+  showTopicBar: boolean = true;
+  showAnswerBar: boolean = true;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
@@ -273,7 +275,7 @@ export class DirectThreadComponent implements OnInit {
       }
       const messageRef = doc(
         this.firestore,
-        `messages/${this.firstInitialisedThreadMsg}/threadMessages/${message.id}`
+        `messages/${this.directMessageId}/threadMessages/${message.id}`
       );
       if (!this.editableMessageText || this.editableMessageText.trim() === '') {
         await deleteDoc(messageRef);
