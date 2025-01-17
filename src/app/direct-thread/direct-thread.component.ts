@@ -134,6 +134,7 @@ export class DirectThreadComponent implements OnInit {
   showEditDialog: string | null = null;
   editTopicMode: boolean = false;
   editableTopicText: string = '';
+  debugReactionBar: boolean = true;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
@@ -513,27 +514,30 @@ export class DirectThreadComponent implements OnInit {
   }
 
   async getThreadMessageRef(currentMessageId: string): Promise<any> {
-    let threadMessageRef = doc(
+    console.log(currentMessageId);
+  
+    const topicMessageRef = doc(this.firestore, 'messages', currentMessageId);
+    const threadMessageRef = doc(
       this.firestore,
-      `messages/${currentMessageId}/threadMessages/${currentMessageId}`
+      'messages',
+      this.directMessageId,
+      'threadMessages',
+      currentMessageId
     );
-    if (!this.firstThreadValue) {
-      const firstInitialisedThreadMsg = await firstValueFrom(
-        this.threadControlService.firstThreadMessageId$
-      );
-      threadMessageRef = doc(
-        this.firestore,
-        `messages/${firstInitialisedThreadMsg}/threadMessages/${currentMessageId}`
-      );
+  
+    const topicDocSnapshot = await getDoc(topicMessageRef);
+    if (topicDocSnapshot.exists()) {
+      return topicMessageRef;
     }
-    if (this.firstThreadValue) {
-      threadMessageRef = doc(
-        this.firestore,
-        `messages/${this.firstThreadValue}/threadMessages/${currentMessageId}`
-      );
+    const threadDocSnapshot = await getDoc(threadMessageRef);
+    if (threadDocSnapshot.exists()) {
+      return threadMessageRef;
     }
-    return threadMessageRef;
+  
+    console.error('No valid document reference found for the given ID.');
+    return null;
   }
+  
 
   async getThreadMessageDoc(threadMessageRef: any): Promise<any> {
     const threadMessageDoc = await getDoc(threadMessageRef);
@@ -545,27 +549,42 @@ export class DirectThreadComponent implements OnInit {
   }
 
   async addEmoji(event: any, currentMessageId: string, userId: string) {
-    const emoji = event.emoji.native;
-    const threadMessageRef = await this.getThreadMessageRef(currentMessageId);
-    const threadMessageData = await this.getThreadMessageDoc(threadMessageRef);
-    if (!threadMessageData) return;
-    if (!threadMessageData['reactions']) {
-      threadMessageData['reactions'] = {};
+    try {
+      const emoji = event.emoji.native;
+      const threadMessageRef = await this.getThreadMessageRef(currentMessageId);
+      const threadMessageData = await this.getThreadMessageDoc(threadMessageRef);
+      if (!threadMessageData) return;
+  
+      // Ensure the reactions object exists and is valid
+      if (!threadMessageData['reactions'] || typeof threadMessageData['reactions'] !== 'object') {
+        threadMessageData['reactions'] = {};
+      }
+  
+      // Add or update the reaction for the user
+      const userReaction = threadMessageData['reactions'][userId];
+      if (userReaction && userReaction.emoji === emoji) {
+        threadMessageData['reactions'][userId].counter =
+          userReaction.counter === 0 ? 1 : 0;
+      } else {
+        threadMessageData['reactions'][userId] = {
+          emoji: emoji,
+          counter: 1,
+        };
+      }
+  
+      // Validate the reactions object before updating
+      if (Object.keys(threadMessageData['reactions']).length === 0) {
+        throw new Error('Reactions object is empty.');
+      }
+  
+      await updateDoc(threadMessageRef, {
+        reactions: threadMessageData['reactions'],
+      });
+    } catch (error) {
+      console.error('Error adding emoji reaction:', error);
     }
-    const userReaction = threadMessageData['reactions'][userId];
-    if (userReaction && userReaction.emoji === emoji) {
-      threadMessageData['reactions'][userId].counter =
-        userReaction.counter === 0 ? 1 : 0;
-    } else {
-      threadMessageData['reactions'][userId] = {
-        emoji: emoji,
-        counter: 1,
-      };
-    }
-    await updateDoc(threadMessageRef, {
-      reactions: threadMessageData['reactions'],
-    });
   }
+  
 
   TwoReactionsTwoEmojis(recipientId: any, senderId: any): boolean {
     if (recipientId?.counter > 0 && senderId?.counter > 0) {

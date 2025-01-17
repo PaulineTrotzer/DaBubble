@@ -122,10 +122,6 @@
   height: 650px;
 }
 
-.sticker-hover-ct {
-  height: fit-content;
-}
-
 .show-set {
   position: absolute;
   left: 0;
@@ -135,7 +131,7 @@
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 0;
-  top: -11px;
+  top: -20px;
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
@@ -230,6 +226,7 @@
 }
 
 .show-set-reverse {
+  top: -20px;
   position: absolute;
   border: 1px solid #adb0d9;
   background-color: white;
@@ -588,6 +585,7 @@ h3 {
 
 .answer-message-container {
   position: relative;
+  margin: 16px 0;
   &:hover .answer-text-user {
     background-color: white;
   }
@@ -723,6 +721,11 @@ h3 {
     text-align: left;
     color: #686868;
   }
+}
+
+.reaction-bar-user {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .message-header-from-cu {

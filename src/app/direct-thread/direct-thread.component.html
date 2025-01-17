@@ -300,7 +300,9 @@
             (mouseenter)="showAnswerBar = message.id"
             (mouseleave)="showAnswerBar = null; showEditDialog = null"
           >
-            <div class="sticker-hover-ct" *ngIf="showAnswerBar === message.id">
+            <div class="sticker-hover-ct" *ngIf="showAnswerBar === message.id" [ngClass]="{
+              'reaction-bar-user': message.senderId !== global.currentUserData.id
+            }">
               <mat-card
                 *ngIf="showEditDialog === message.id"
                 class="edit-messages-card"
@@ -317,7 +319,7 @@
                   >
                 </mat-card-content>
               </mat-card>
-              <div class="show-set-reverse" @slideIn>
+              <div class="show-set-reverse" @slideIn >
                 <div class="img-flex-bar-options">
                   <div
                     class="edit-icon-holder"
@@ -368,6 +370,8 @@
                       viewBox="0 0 40 40"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      (mouseenter)="showEditDialog = null"
+                      (mouseleave)="showEditDialog = null"
                     >
                       <mask
                         id="mask0_489_4318"
