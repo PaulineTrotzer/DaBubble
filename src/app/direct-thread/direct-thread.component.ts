@@ -132,6 +132,8 @@ export class DirectThreadComponent implements OnInit {
   showTopicBar: boolean = false;
   showAnswerBar: string | null = null;
   showEditDialog: string | null = null;
+  editTopicMode: boolean = false;
+  editableTopicText: string = '';
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
@@ -189,6 +191,34 @@ export class DirectThreadComponent implements OnInit {
 
   toggleEditOption(messageId: string) {
     this.showEditDialog = this.showEditDialog === messageId ? null : messageId;
+  }
+
+  enableEditTopic(): void {
+    this.editTopicMode = true;
+    this.editableTopicText = this.topicMessage.text;
+  }
+
+  cancelTopicEdit(): void {
+    this.editTopicMode = false;
+    this.editableTopicText = '';
+  }
+
+  async saveTopicEdit(): Promise<void> {
+    try {
+      if (!this.editableTopicText.trim()) {
+        console.error('Topic text cannot be empty');
+        return;
+      }
+      const docRef = doc(this.firestore, 'messages', this.directMessageId);
+      await updateDoc(docRef, { 
+        text: this.editableTopicText,
+        editedTextShow: true,
+       });
+      this.topicMessage.text = this.editableTopicText; // Update the local view
+      this.editTopicMode = false; // Exit edit mode
+    } catch (error) {
+      console.error('Error saving the topic edit:', error);
+    }
   }
 
   editMessages(message: any) {
@@ -468,12 +498,17 @@ export class DirectThreadComponent implements OnInit {
     this.overlayStatusService.setOverlayStatus(true);
   }
 
-  addEmojiToEdit(event: any) {
+  addEmojiToEdit(event: any, target: 'topic' | 'message'): void {
     if (event && event.emoji && event.emoji.native) {
       const emoji = event.emoji.native;
-      this.editableMessageText = (this.editableMessageText || '') + emoji;
+  
+      if (target === 'topic') {
+        this.editableTopicText = (this.editableTopicText || '') + emoji;
+      } else if (target === 'message') {
+        this.editableMessageText = (this.editableMessageText || '') + emoji;
+      }
     } else {
-      console.error('kein Emoji ausgewählt');
+      console.error('No emoji selected');
     }
   }
 
