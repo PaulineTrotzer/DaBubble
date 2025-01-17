@@ -191,7 +191,7 @@
               </div>
             </div>
           </div>
-          <div class="sticker-hover-ct" *ngIf="showTopicBar">
+          <div class="sticker-hover-ct" *ngIf="showTopicBar && !editTopicMode">
             <mat-card
               *ngIf="showEditDialog === topicMessage.id"
               class="edit-messages-card"
@@ -300,7 +300,7 @@
             (mouseenter)="showAnswerBar = message.id"
             (mouseleave)="showAnswerBar = null; showEditDialog = null"
           >
-            <div class="sticker-hover-ct" *ngIf="showAnswerBar === message.id" [ngClass]="{
+            <div class="sticker-hover-ct" *ngIf="showAnswerBar === message.id && !editWasClicked" [ngClass]="{
               'reaction-bar-user': message.senderId !== global.currentUserData.id
             }">
               <mat-card
