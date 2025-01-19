@@ -9,11 +9,28 @@
 }
 
 .text-info-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   position: relative;
   font-size: 12px;
-  margin-top: 9px;
   font-family: "Nunito";
   text-align: center;
+}
+
+.same-emoji {
+  display: flex;
+  align-items: center;
+}
+
+.single-emoji,
+.reaction-counter {
+  font-size: 12px;
+}
+
+.reaction-edit-info {
+  display: flex;
+  gap: 8px;
 }
 
 .mat-mdc-card {
@@ -370,6 +387,7 @@ h3 {
   border-bottom-right-radius: 0px;
   bottom: 40px;
   right: -28px;
+  position: absolute;
 }
 
 .both-reaction-info-ct.both-reaction-left {
@@ -379,6 +397,7 @@ h3 {
   border-bottom-left-radius: 0;
   bottom: 76px;
   left: 35px;
+  position: absolute;
 }
 
 .two-single {
@@ -603,6 +622,7 @@ h3 {
 .answer-text-content {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .answer-text-content-currentuser {
