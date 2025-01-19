@@ -386,7 +386,7 @@ h3 {
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 0px;
   bottom: 40px;
-  right: -28px;
+  right: 128px;
   position: absolute;
 }
 
@@ -453,17 +453,22 @@ h3 {
   gap: 5px;
   position: relative;
   text-align: center;
-  right: 27px;
   background-color: #444df2;
-  width: fit-content;
-  height: fit-content;
   padding: 5px 15px;
-  text-align: center;
   color: white;
+  max-width: 158px;
+  max-width: 112px;
+  width: 100%;
 }
 
-.reaction-info-txt {
+.reaction-info-txt,
+.reaction-info-txt-both {
   font-size: 13px;
+  max-width: 158px;
+  width: 100%;
+  max-height: 112px;
+  height: 100%;
+  text-align: center;
 }
 
 .react-emoji-value {
