@@ -186,8 +186,208 @@
                   />
                 </div>
               </ng-template>
-              <div *ngIf="topicMessage.editedTextShow" class="text-info-edit">
-                (Bearbeitet)
+              <div class="reaction-edit-info">
+                <div *ngIf="topicMessage.editedTextShow" class="text-info-edit">
+                  <span>(Bearbeited)</span>
+                </div>
+                <div
+                  class="render-reaction-ct-sender"
+                  *ngIf="!areEmojisSame(topicMessage.reactions)"
+                >
+                  <ng-container>
+                    <div
+                      *ngIf="topicMessage.reactions[topicMessage.senderId]?.counter > 0"
+                      class="emoji-holder"
+                      (mouseenter)="
+                        toggleReactionInfoSender(topicMessage.id, true)
+                      "
+                      (mouseleave)="
+                        toggleReactionInfoSender(topicMessage.id, false)
+                      "
+                    >
+                      <span class="single-emoji">
+                        {{ topicMessage.reactions[topicMessage.senderId]?.emoji }}
+                      </span>
+                      <span
+                        *ngIf="
+                          topicMessage.reactions[topicMessage.senderId]?.counter > 0
+                        "
+                        class="reaction-counter"
+                      >
+                        {{ topicMessage.reactions[topicMessage.senderId]?.counter }}
+                      </span>
+                    </div>
+
+                    <div
+                      class="reaction-name-info-ct-sender"
+                      *ngIf="showReactionPopUpSender[topicMessage.id]"
+                      [class.reaction-sender-selectedUser-left]="
+                        topicMessage.senderId === selectedUser.uid
+                      "
+                      [class.reaction-sender-currentUser-right]="
+                        topicMessage.senderId === global.currentUserData.id
+                      "
+                    >
+                      <span class="reaction-info-txt">
+                        <ng-container
+                          *ngIf="
+                            topicMessage.senderId === global.currentUserData.id
+                          "
+                        >
+                          Du hast mit
+                          <span class="react-emoji-value"
+                            >{{ topicMessage.reactions[topicMessage.senderId]?.emoji }}
+                          </span>
+                          reagiert
+                        </ng-container>
+                        <ng-container
+                          *ngIf="topicMessage.senderId === selectedUser.uid"
+                        >
+                          {{ topicMessage.senderName }} hat mit
+                          <span class="react-emoji-value">{{
+                            topicMessage.reactions[topicMessage.senderId]?.emoji
+                          }}</span>
+                          reagiert
+                        </ng-container>
+                      </span>
+                    </div>
+                  </ng-container>
+                </div>
+                <div
+                  class="render-reaction-ct-recipient"
+                  *ngIf="!areEmojisSame(topicMessage.reactions)"
+                >
+                  <ng-container>
+                    <div
+                      *ngIf="
+                        topicMessage.reactions[topicMessage.recipientId]?.counter > 0
+                      "
+                      class="emoji-holder"
+                      (mouseenter)="
+                        toggleReactionInfoRecipient(topicMessage.id, true)
+                      "
+                      (mouseleave)="
+                        toggleReactionInfoRecipient(topicMessage.id, false)
+                      "
+                    >
+                      <span class="single-emoji">
+                        {{ topicMessage.reactions[topicMessage.recipientId]?.emoji }}
+                      </span>
+                      <span
+                        *ngIf="
+                          topicMessage.reactions[topicMessage.recipientId]?.counter > 0
+                        "
+                        class="reaction-counter"
+                      >
+                        {{ topicMessage.reactions[topicMessage.recipientId]?.counter }}
+                      </span>
+                    </div>
+
+                    <div
+                      class="reaction-name-info-ct-recipient"
+                      *ngIf="showReactionPopUpRecipient[topicMessage.id]"
+                    >
+                      <span class="reaction-info-txt">
+                        <ng-container
+                          *ngIf="
+                            topicMessage.recipientId === global.currentUserData.id
+                          "
+                        >
+                          Du hast mit
+                          <span class="react-emoji-value">{{
+                            topicMessage.reactions[topicMessage.recipientId]?.emoji
+                          }}</span>
+                          reagiert
+                        </ng-container>
+                        <ng-container
+                          *ngIf="topicMessage.recipientId === selectedUser.uid"
+                        >
+                          {{ topicMessage.recipientName }} hat mit
+                          <span class="react-emoji-value">{{
+                            topicMessage.reactions[topicMessage.recipientId]?.emoji
+                          }}</span>
+                          reagiert
+                        </ng-container>
+                      </span>
+                    </div>
+                  </ng-container>
+                </div>
+                <div
+                    class="same-emoji"
+                    *ngIf="areEmojisSame(topicMessage.reactions)"
+                  >
+                    <div
+                      class="emoji-holder"
+                      (mouseover)="toggleBothReactionInfo(topicMessage.id, true)"
+                      (mouseout)="toggleBothReactionInfo(topicMessage.id, false)"
+                      [class.emojis-holder-both-two-single]="
+                        !TwoReactionsTwoEmojis(
+                          topicMessage.reactions[topicMessage.recipientId],
+                          topicMessage.reactions[topicMessage.senderId]
+                        ) && topicMessage.reactions.counter > 0
+                      "
+                      [class.both-reaction-right-emojis-holder]="
+                        topicMessage.senderName === global.currentUserData.name
+                      "
+                    >
+                      <span class="single-emoji">
+                        {{ getEmojiFromFirstUser(topicMessage.reactions) }}
+                      </span>
+                      <span class="reaction-counter">
+                        {{ getTotalCounterForSameEmoji(topicMessage.reactions) }}
+                      </span>
+                    </div>
+                    <div
+                      class="both-reaction-info-ct"
+                      [ngClass]="{
+                        'both-reaction-right':
+                        topicMessage.senderName === global.currentUserData.name,
+                        'both-reaction-left':
+                        topicMessage.recipientName ===
+                          global.currentUserData.name,
+                        'both-two-single': !TwoReactionsTwoEmojis(
+                          topicMessage.reactions[topicMessage.recipientId],
+                          topicMessage.reactions[topicMessage.senderId]
+                        )
+                      }"
+                      [style.visibility]="
+                        showReactionPopUpBoth[topicMessage.id]
+                          ? 'visible'
+                          : 'hidden'
+                      "
+                    >
+                      <span
+                        class="reaction-info-txt-both"
+                        *ngIf="
+                          TwoReactionsTwoEmojis(
+                            topicMessage.reactions[topicMessage.recipientId],
+                            topicMessage.reactions[topicMessage.senderId]
+                          )
+                        "
+                      >
+                        Du und {{ selectedUser.name }} haben mit
+                        <span class="reaction-emoji">{{
+                          getEmojiFromFirstUser(topicMessage.reactions)
+                        }}</span>
+                        reagiert</span
+                      >
+                      <span
+                        class="reaction-info-txt-both two-single"
+                        *ngIf="
+                          !TwoReactionsTwoEmojis(
+                            topicMessage.reactions[topicMessage.recipientId],
+                            topicMessage.reactions[topicMessage.senderId]
+                          )
+                        "
+                      >
+                        {{ selectedUser.name }} hat mit
+                        <span class="reaction-emoji">{{
+                          getEmojiFromFirstUser(topicMessage.reactions)
+                        }}</span>
+                        reagiert</span
+                      >
+                    </div>
+                  </div>
               </div>
             </div>
           </div>

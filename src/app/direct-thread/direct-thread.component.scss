@@ -619,7 +619,8 @@ h3 {
   flex-direction: row-reverse;
 }
 
-.answer-text-content {
+.answer-text-content,
+.topic-text-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
