@@ -288,6 +288,10 @@
                     <div
                       class="reaction-name-info-ct-recipient"
                       *ngIf="showReactionPopUpRecipient[topicMessage.id]"
+                      [ngClass]="{
+                        'topic-reaction-current': topicMessage.senderId === global.currentUserData.id,
+                        'topic-reaction-user': topicMessage.senderId !== global.currentUserData.id
+                      }"
                     >
                       <span class="reaction-info-txt">
                         <ng-container

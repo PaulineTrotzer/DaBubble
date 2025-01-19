@@ -401,12 +401,23 @@ h3 {
   border-bottom-right-radius: 30px;
   border-bottom-left-radius: 0;
   bottom: 46px;
-  left: 216px;
+  left: 136px;
   position: absolute;
 }
 
 .two-single {
   bottom: 5px !important;
+}
+
+.topic-reaction-current {
+  border-top-right-radius: 30px !important;
+  border-top-left-radius: 30px !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 30px !important;
+}
+
+.topic-reaction-user {
+  left: 136px;
 }
 
 .reaction-sender-selectedUser-left {
