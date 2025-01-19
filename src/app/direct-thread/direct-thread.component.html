@@ -356,7 +356,11 @@
                           topicMessage.reactions[topicMessage.senderId]
                         )
                       }"
-                      
+                      [style.visibility]="
+                      showReactionPopUpBoth[topicMessage.id]
+                        ? 'visible'
+                        : 'hidden'
+                    "
                     >
                       <span
                         class="reaction-info-txt-both"
