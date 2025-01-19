@@ -29,11 +29,12 @@ import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { LoginAuthService } from '../services/login-auth.service';
 import { Subscription } from 'rxjs';
+import { SelectionService } from '../services/selection.service';
 
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, DialogCreateChannelComponent],
+  imports: [CommonModule, MatDialogModule],
   templateUrl: './workspace.component.html',
   styleUrl: './workspace.component.scss',
 })
@@ -53,10 +54,10 @@ export class WorkspaceComponent implements OnInit {
   userService = inject(UserService);
   @Output() userSelected = new EventEmitter<any>();
   @Output() channelSelected = new EventEmitter<Channel>();
-
   @Input() selectedUserHome: any;
   @Input() selectedChannelHome: any;
   readonly dialog = inject(MatDialog);
+  selection = inject(SelectionService)
   private channelsUnsubscribe: Unsubscribe | undefined;
   logInAuth = inject(LoginAuthService);
   isGuestLogin = false;
@@ -105,7 +106,6 @@ export class WorkspaceComponent implements OnInit {
     ) {
       this.selectedUser = this.selectedUserHome;
       this.userSelected.emit(this.selectedUser);
-      console.log('User has been updated:', this.selectedUser);
     }
 
     if (
@@ -114,60 +114,70 @@ export class WorkspaceComponent implements OnInit {
     ) {
       this.selectedChannel = this.selectedChannelHome;
       this.channelSelected.emit(this.selectedChannel);
-      console.log('Channel has been updated:', this.selectedChannel);
     }
   }
 
-
-selectUser(user: any) {
-  this.userSelected.emit(user);
-  this.id = user.id;
-  this.global.currentThreadMessageSubject.next('');
-  this.global.channelThreadSubject.next(null);
-  const actuallyId = this.id;
-  if (this.userId && this.messageCountsArr?.messageCount && this.messageCountsArr.messageCount[actuallyId] > 0) {
-    const docRef = doc(this.firestore, 'messageCounts', this.userId);
-    const resetMessageCount: any = {};
-    resetMessageCount[`messageCount.${actuallyId}`] = 0;
-    updateDoc(docRef, resetMessageCount);
-  } 
-   this.global.statusCheck =false;
-   this.openvollWidtChannelOrUserBox();
-   this.hiddenVoolThreadBox();
-   this.checkWidtSize();
-   this.cheackChatOpen();
-}   
-
-openvollWidtChannelOrUserBox() {
-  if(window.innerWidth<=1900 && window.innerWidth > 1200){
-    return this.global.checkWideChannelorUserBox=true;
-  }else{
-    return this.global.checkWideChannelorUserBox=false;
+  selectUser(user: any) {
+    this.userSelected.emit(user);
+    this.selectedChannel = null;
+    this.selectedUser = user;
+    this.global.channelSelected = false;
+    this.id = user.id;
+    this.global.currentThreadMessageSubject.next('');
+    this.global.channelThreadSubject.next(null);
+    this.selectedChannel = null;
+    const actuallyId = this.id;
+    if (
+      this.userId &&
+      this.messageCountsArr?.messageCount &&
+      this.messageCountsArr.messageCount[actuallyId] > 0
+    ) {
+      const docRef = doc(this.firestore, 'messageCounts', this.userId);
+      const resetMessageCount: any = {};
+      resetMessageCount[`messageCount.${actuallyId}`] = 0;
+      updateDoc(docRef, resetMessageCount);
+    }
+    this.global.statusCheck = false;
+    this.openvollWidtChannelOrUserBox();
+    this.hiddenVoolThreadBox();
+    this.checkWidtSize();
+    this.cheackChatOpen();
+    this.selection.setSelectedUser(user);
   }
-} 
-  
-hiddenVoolThreadBox(){
-  if(window.innerWidth<=1900 && window.innerWidth > 1200 && this.global.checkWideChannelOrUserThreadBox){
-    this.global.checkWideChannelOrUserThreadBox=false;
+
+  openvollWidtChannelOrUserBox() {
+    if (window.innerWidth <= 1900 && window.innerWidth > 1200) {
+      return (this.global.checkWideChannelorUserBox = true);
+    } else {
+      return (this.global.checkWideChannelorUserBox = false);
+    }
   }
-}
 
-cheackChatOpen(){
-if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
-  this.global.openChannelOrUserThread=false;
-}
-}    
+  hiddenVoolThreadBox() {
+    if (
+      window.innerWidth <= 1900 &&
+      window.innerWidth > 1200 &&
+      this.global.checkWideChannelOrUserThreadBox
+    ) {
+      this.global.checkWideChannelOrUserThreadBox = false;
+    }
+  }
 
-checkWidtSize(){
-  if(window.innerWidth<=1200){
-    console.log('1200 dempq')
-  return  this.global.openChannelorUserBox = true;
-   } else{
-  return  this.global.openChannelorUserBox = false;
-   }
-}
+  cheackChatOpen() {
+    if (window.innerWidth <= 1200 && this.global.openChannelOrUserThread) {
+      this.global.openChannelOrUserThread = false;
+    }
+  }
 
-           
+  checkWidtSize() {
+    if (window.innerWidth <= 1200) {
+      console.log('1200 dempq');
+      return (this.global.openChannelorUserBox = true);
+    } else {
+      return (this.global.openChannelorUserBox = false);
+    }
+  }
+
   selectCurrentUser() {
     this.selectedChannel = null;
     this.selectedUser = this.global.currentUserData;
@@ -261,12 +271,14 @@ checkWidtSize(){
   }
 
   async selectChannel(channel: any) {
-    const isMember = await this.global.checkChannelMembership(channel, this.global.currentUserData.id);
-
+    this.channelSelected.emit(channel);
     this.selectedUser = null;
     this.selectedChannel = channel;
+    const isMember = await this.global.checkChannelMembership(
+      channel,
+      this.global.currentUserData.id
+    );
     this.global.channelSelected = true;
-    this.channelSelected.emit(channel);
     this.global.currentThreadMessageSubject.next('');
     this.global.channelThreadSubject.next(null);
     this.global.setCurrentChannel(channel);
@@ -274,6 +286,7 @@ checkWidtSize(){
     this.hiddenVoolThreadBox();
     this.checkWidtSize();
     this.cheackChatOpen();
+    this.selection.setSelectedChannel(channel);
   }
 
   toggleChannelDrawer() {
@@ -283,28 +296,29 @@ checkWidtSize(){
     this.messageDrawerOpen = !this.messageDrawerOpen;
   }
 
-
-   isUserChanged(userOrChannel: any, isChannel: boolean): boolean {
+  isUserChanged(userOrChannel: any, isChannel: boolean): boolean {
     if (isChannel) {
-      return false; 
+      return false;
     }
     return userOrChannel.id !== this.selectedUser?.id;
   }
-  
-   setUser(userOrChannel: any): void {
+
+  setUser(userOrChannel: any): void {
     this.selectedUser = userOrChannel;
     this.selectUser(this.selectedUser);
-    const foundUser = this.allUsers.find((user: { id: any }) => user.id === this.selectedUser.id);
+    const foundUser = this.allUsers.find(
+      (user: { id: any }) => user.id === this.selectedUser.id
+    );
     if (foundUser) {
       this.selectedUser = foundUser;
     }
   }
-  
-   setChannel(userOrChannel: any): void {
+
+  setChannel(userOrChannel: any): void {
     this.selectedChannel = userOrChannel;
     this.selectChannel(this.selectedChannel);
   }
-  
+
   enterByUsername(userOrChannel: any, isChannel: boolean = false) {
     if (isChannel && (!userOrChannel || !userOrChannel.name)) {
       console.warn('Invalid channel passed to enterByUsername. Aborting.');
@@ -318,5 +332,4 @@ checkWidtSize(){
       this.setChannel(userOrChannel);
     }
   }
-  
 }
