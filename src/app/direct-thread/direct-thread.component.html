@@ -350,11 +350,7 @@
                           topicMessage.reactions[topicMessage.senderId]
                         )
                       }"
-                      [style.visibility]="
-                        showReactionPopUpBoth[topicMessage.id]
-                          ? 'visible'
-                          : 'hidden'
-                      "
+                      
                     >
                       <span
                         class="reaction-info-txt-both"
@@ -882,7 +878,9 @@
                       <div
                         class="reaction-name-info-ct-recipient"
                         [ngClass]="{
-                          'reaction-info-foruser': message.senderId !== global.currentUserData.id
+                          'reaction-info-currentUser': message.senderId === global.currentUserData.id,
+                          'reaction-info-foruser': message.senderId !== global.currentUserData.id,
+                          'reaction-info-foruser-none-sender': message.senderId !== global.currentUserData.id && message.reactions[message.senderId]?.counter <= 0
                         }"
                         *ngIf="showReactionPopUpRecipient[message.id]"
                       >

@@ -137,6 +137,7 @@ export class DirectThreadComponent implements OnInit {
   editableTopicText: string = '';
   debugReactionBar: boolean = true;
   currentUserLastEmojis: string[] = [];
+  debugReactionInfo: boolean = true;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {

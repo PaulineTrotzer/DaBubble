@@ -96,7 +96,7 @@
 .two-both-selectedUser-reaction-left {
   position: relative;
   bottom: 55px;
-  left: 32px;
+  left: 120px;
 }
 
 .separated-both-selectedUser-reaction-left {
@@ -400,8 +400,8 @@ h3 {
   border-top-left-radius: 30px;
   border-bottom-right-radius: 30px;
   border-bottom-left-radius: 0;
-  bottom: 76px;
-  left: 35px;
+  bottom: 46px;
+  left: 216px;
   position: absolute;
 }
 
@@ -411,11 +411,17 @@ h3 {
 
 .reaction-sender-selectedUser-left {
   bottom: 40px;
-  left: 20px;
+  left: 130px;
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 0;
+  z-index: 10;
 }
 
 .reaction-sender-currentUser-right {
-  bottom: 40px;
+  bottom: 45px;
+  right: 198px;
 }
 
 .line {
@@ -480,6 +486,13 @@ h3 {
   margin-right: 6px;
 }
 
+.reaction-info-currentUser {
+  border-top-right-radius: 30px !important;
+  border-top-left-radius: 30px !important;
+  border-bottom-left-radius: 30px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
 .reaction-name-info-ct-recipient {
   display: flex;
   position: absolute;
@@ -500,6 +513,10 @@ h3 {
 
 .reaction-info-foruser {
   right: unset;
+  left: 190px;
+}
+
+.reaction-info-foruser-none-sender {
   left: 128px;
 }
 
