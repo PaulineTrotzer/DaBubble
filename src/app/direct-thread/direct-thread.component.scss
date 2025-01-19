@@ -410,8 +410,8 @@ h3 {
 }
 
 .reaction-sender-selectedUser-left {
-  bottom: 40px;
-  left: 130px;
+  bottom: 45px;
+  left: 190px;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
   border-bottom-right-radius: 30px;
@@ -513,11 +513,16 @@ h3 {
 
 .reaction-info-foruser {
   right: unset;
-  left: 190px;
+  left: 128px;
 }
 
 .reaction-info-foruser-none-sender {
   left: 128px;
+}
+
+.reaction-reverse {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
 }
 
 .topic-message-container {

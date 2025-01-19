@@ -186,7 +186,9 @@
                   />
                 </div>
               </ng-template>
-              <div class="reaction-edit-info">
+              <div class="reaction-edit-info" [ngClass]="{
+                'reaction-reverse': topicMessage.senderId !== global.currentUserData.id
+              }">
                 <div *ngIf="topicMessage.editedTextShow" class="text-info-edit">
                   <span>(Bearbeited)</span>
                 </div>
@@ -778,7 +780,9 @@
                     </div>
                   </ng-template>
                 </div>
-                <div class="reaction-edit-info">
+                <div class="reaction-edit-info" [ngClass]="{
+                  'reaction-reverse': message.senderId !== global.currentUserData.id
+                }">
                   <div *ngIf="message.editedTextShow" class="text-info-edit">
                     <span>(Bearbeited)</span>
                   </div>
