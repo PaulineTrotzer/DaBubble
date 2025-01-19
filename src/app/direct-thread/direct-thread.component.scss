@@ -140,6 +140,7 @@
 }
 
 .show-set {
+  gap: 8px;
   position: absolute;
   left: 12px;
   border: 1px solid #adb0d9;
@@ -155,10 +156,15 @@
   align-items: center;  
 }
 
+.show-set-reverse {
+  left: unset;
+  right: 12px;
+}
+
 .used-emojis {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 0 0 0 8px;
   font-size: 17px;
 }
@@ -167,7 +173,7 @@
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  padding: 0 12px 0 0;
+  padding: 0 8px 0 0;
   gap: 3px;
   img {
     object-fit: contain;
@@ -251,21 +257,6 @@
   justify-content: start;
   width: fit-content;
   gap: 6px;
-}
-
-.show-set-reverse {
-  top: -20px;
-  position: absolute;
-  border: 1px solid #adb0d9;
-  background-color: white;
-  border-top-right-radius: 30px;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 0;
-  color: white;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center; 
 }
 
 header {
@@ -720,12 +711,8 @@ h3 {
   flex-direction: row-reverse;
 }
 
-.add-emojis-user {
-  padding: 0 0 0 8px;
-}
-
 .last-emojis-user {
-  padding: 0 8px 0 0;
+  padding: 0 0 0 8px;
 }
 
 .topic-message {

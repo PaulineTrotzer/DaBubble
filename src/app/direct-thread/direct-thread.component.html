@@ -509,7 +509,7 @@
           >
             <div
               class="sticker-hover-ct"
-              *ngIf="debugReactionBar"
+              *ngIf="showAnswerBar === message.id && !editWasClicked"
               [ngClass]="{
                 'reaction-bar-user':
                   message.senderId !== global.currentUserData.id
@@ -531,8 +531,8 @@
                   >
                 </mat-card-content>
               </mat-card>
-              <div class="show-set-reverse" @slideIn [ngClass]="{
-                'reverse': message.senderId !== global.currentUserData.id
+              <div class="show-set" @slideIn [ngClass]="{
+                'show-set-reverse': message.senderId !== global.currentUserData.id
               }">
                 <div class="used-emojis" [ngClass]="{
                   'last-emojis-user': message.senderId !== global.currentUserData.id
