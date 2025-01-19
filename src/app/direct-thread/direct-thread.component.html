@@ -408,7 +408,7 @@
             </mat-card>
             <div class="show-set" @slideIn>
               <div class="used-emojis">
-                <span *ngFor="let emoji of currentUserLastEmojis" class="emoji">
+                <span *ngFor="let emoji of currentUserLastEmojis" class="emoji" (click)="handleLastEmojiClick(emoji, topicMessage.id, global.currentUserData.id)">
                   {{ emoji }}
                 </span>
               </div>
@@ -537,7 +537,7 @@
                 <div class="used-emojis" [ngClass]="{
                   'last-emojis-user': message.senderId !== global.currentUserData.id
                 }">
-                  <span *ngFor="let emoji of currentUserLastEmojis" class="emoji">
+                  <span *ngFor="let emoji of currentUserLastEmojis" class="emoji" (click)="handleLastEmojiClick(emoji, message.id, global.currentUserData.id)">
                     {{ emoji }}
                   </span>
                 </div>
@@ -881,6 +881,9 @@
 
                       <div
                         class="reaction-name-info-ct-recipient"
+                        [ngClass]="{
+                          'reaction-info-foruser': message.senderId !== global.currentUserData.id
+                        }"
                         *ngIf="showReactionPopUpRecipient[message.id]"
                       >
                         <span class="reaction-info-txt">

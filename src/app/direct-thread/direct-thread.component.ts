@@ -569,38 +569,47 @@ export class DirectThreadComponent implements OnInit {
     return threadMessageDoc.data();
   }
 
-  async addEmoji(event: any, currentMessageId: string, userId: string) {
+  async handleLastEmojiClick(emoji: string, messageId: string, userId: string) {
     try {
-      const emoji = event.emoji.native;
-      const threadMessageRef = await this.getThreadMessageRef(currentMessageId);
+      const threadMessageRef = await this.getThreadMessageRef(messageId);
       const threadMessageData = await this.getThreadMessageDoc(threadMessageRef);
       if (!threadMessageData) return;
   
-      // Ensure the reactions object exists and is valid
-      if (!threadMessageData['reactions'] || typeof threadMessageData['reactions'] !== 'object') {
+      if (!threadMessageData['reactions']) {
         threadMessageData['reactions'] = {};
       }
   
-      // Add or update the reaction for the user
-      const userReaction = threadMessageData['reactions'][userId];
-      if (userReaction && userReaction.emoji === emoji) {
-        threadMessageData['reactions'][userId].counter =
-          userReaction.counter === 0 ? 1 : 0;
+
+      const existingReaction = threadMessageData['reactions'][userId];
+      if (existingReaction) {
+        if (existingReaction.emoji === emoji) {
+          threadMessageData['reactions'][userId].counter = 
+            existingReaction.counter === 0 ? 1 : 0;
+        } else {
+          threadMessageData['reactions'][userId] = {
+            emoji: emoji,
+            counter: 1
+          };
+        }
       } else {
         threadMessageData['reactions'][userId] = {
           emoji: emoji,
-          counter: 1,
+          counter: 1
         };
       }
-  
-      // Validate the reactions object before updating
-      if (Object.keys(threadMessageData['reactions']).length === 0) {
-        throw new Error('Reactions object is empty.');
-      }
-      console.log(threadMessageData['reactions'])
+
       await updateDoc(threadMessageRef, {
-        reactions: threadMessageData['reactions'],
+        reactions: threadMessageData['reactions']
       });
+    } catch (error) {
+      console.error('Error handling emoji click:', error);
+    }
+  }
+
+  async addEmoji(event: any, messageId: string, userId: string) {
+    try {
+      const emoji = event.emoji.native;
+      await this.handleLastEmojiClick(emoji, messageId, userId);
     } catch (error) {
       console.error('Error adding emoji reaction:', error);
     }

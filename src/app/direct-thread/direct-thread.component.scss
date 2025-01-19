@@ -373,11 +373,12 @@ h3 {
 .reaction-name-info-ct-sender {
   display: flex;
   position: absolute;
+  right: 128px;
   background-color: #444df2;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 0;
   width: fit-content;
   height: fit-content;
   padding: 8px 15px;
@@ -467,7 +468,7 @@ h3 {
 
 .reaction-info-txt,
 .reaction-info-txt-both {
-  font-size: 13px;
+  font-size: 16px;
   max-width: 158px;
   width: 100%;
   max-height: 112px;
@@ -483,6 +484,7 @@ h3 {
   display: flex;
   position: absolute;
   bottom: 44px;
+  right: 128px;
   background-color: #444df2;
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
@@ -494,6 +496,11 @@ h3 {
   box-sizing: border-box;
   text-align: center;
   color: white;
+}
+
+.reaction-info-foruser {
+  right: unset;
+  left: 128px;
 }
 
 .topic-message-container {
