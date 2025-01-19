@@ -322,7 +322,9 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="message-info-container">
+            <div class="message-info-container" [ngClass]="{
+                'reverse' : message.senderId !== global.currentUserData.id
+            }">
                 <div *ngIf="message.editedTextShow" class="text-info-edit">
                   (Bearbeitet)
                 </div>

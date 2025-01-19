@@ -320,6 +320,11 @@ app-input-field {
   color: #000000;
 }
 
+.reverse {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
 .avatar-box {
   display: flex;
   align-items: center;
