@@ -25,7 +25,7 @@
 
 .single-emoji,
 .reaction-counter {
-  font-size: 12px;
+  font-size: 17px;
 }
 
 .reaction-edit-info {
@@ -141,7 +141,7 @@
 
 .show-set {
   position: absolute;
-  left: 0;
+  left: 12px;
   border: 1px solid #adb0d9;
   background-color: white;
   border-top-right-radius: 30px;
@@ -151,13 +151,23 @@
   top: -20px;
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;  
+}
+
+.used-emojis {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 0 8px;
+  font-size: 17px;
 }
 
 .img-flex-bar-options {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  padding: 3px 12px;
+  padding: 0 12px 0 0;
   gap: 3px;
   img {
     object-fit: contain;
@@ -213,6 +223,7 @@
 }
 
 .emoji-holder {
+  box-sizing: content-box;
   position: relative;
   display: flex;
   width: 46px;
@@ -253,6 +264,8 @@
   border-bottom-right-radius: 0;
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center; 
 }
 
 header {
@@ -701,6 +714,18 @@ h3 {
 .topic-text-container-currentuser {
   padding: 10px 40px 10px 0;
   flex-direction: row-reverse;
+}
+
+.reverse {
+  flex-direction: row-reverse;
+}
+
+.add-emojis-user {
+  padding: 0 0 0 8px;
+}
+
+.last-emojis-user {
+  padding: 0 8px 0 0;
 }
 
 .topic-message {

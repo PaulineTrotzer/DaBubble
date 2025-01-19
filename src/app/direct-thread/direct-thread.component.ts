@@ -39,6 +39,7 @@ import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MentionMessageBoxComponent } from '../mention-message-box/mention-message-box.component';
+import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-direct-thread',
@@ -129,12 +130,13 @@ export class DirectThreadComponent implements OnInit {
   topicMessage: any;
   directMessageId: any;
   messages: any[] = [];
-  showTopicBar: boolean = false;
+  showTopicBar: boolean = true;
   showAnswerBar: string | null = null;
   showEditDialog: string | null = null;
   editTopicMode: boolean = false;
   editableTopicText: string = '';
   debugReactionBar: boolean = true;
+  currentUserLastEmojis: string[] = [];
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
@@ -144,6 +146,7 @@ export class DirectThreadComponent implements OnInit {
         this.getTopic();
         this.getAllUsersname();
         this.loadThreadMessages();
+        this.loadCurrentUserEmojis();
       }
     });
     this.currentUserId = this.route.snapshot.paramMap.get('id');
@@ -164,6 +167,24 @@ export class DirectThreadComponent implements OnInit {
       });
     });
   }
+
+  async loadCurrentUserEmojis() {
+      const auth = getAuth();
+      const currentUserId = auth.currentUser?.uid;
+  
+      if (currentUserId) {
+        const userDocRef = doc(this.firestore, 'users', currentUserId);
+  
+        onSnapshot(userDocRef, (docSnapshot) => {
+          const userData = docSnapshot.data();
+          if (userData?.['lastEmojis']) {
+            this.currentUserLastEmojis = userData['lastEmojis'];
+          }
+        });
+      } else {
+        console.warn('No current user logged in');
+      }
+    }
 
   async loadThreadMessages() {
     if (!this.directMessageId) {

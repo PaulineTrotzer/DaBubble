@@ -407,6 +407,11 @@
               </mat-card-content>
             </mat-card>
             <div class="show-set" @slideIn>
+              <div class="used-emojis">
+                <span *ngFor="let emoji of currentUserLastEmojis" class="emoji">
+                  {{ emoji }}
+                </span>
+              </div>
               <div class="img-flex-bar-options">
                 <div
                   class="edit-icon-holder"
@@ -504,7 +509,7 @@
           >
             <div
               class="sticker-hover-ct"
-              *ngIf="showAnswerBar === message.id && !editWasClicked"
+              *ngIf="debugReactionBar"
               [ngClass]="{
                 'reaction-bar-user':
                   message.senderId !== global.currentUserData.id
@@ -526,8 +531,19 @@
                   >
                 </mat-card-content>
               </mat-card>
-              <div class="show-set-reverse" @slideIn>
-                <div class="img-flex-bar-options">
+              <div class="show-set-reverse" @slideIn [ngClass]="{
+                'reverse': message.senderId !== global.currentUserData.id
+              }">
+                <div class="used-emojis" [ngClass]="{
+                  'last-emojis-user': message.senderId !== global.currentUserData.id
+                }">
+                  <span *ngFor="let emoji of currentUserLastEmojis" class="emoji">
+                    {{ emoji }}
+                  </span>
+                </div>
+                <div class="img-flex-bar-options" [ngClass]="{
+                  'add-emojis-user': message.senderId !== global.currentUserData.id
+                }">
                   <div
                     class="edit-icon-holder"
                     (click)="toggleEditOption(message.id)"
