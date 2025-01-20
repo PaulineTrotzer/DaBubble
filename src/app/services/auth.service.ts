@@ -127,14 +127,13 @@ export class AuthService {
       console.error('Fehler beim Login:', error);
     }
   }
-  
 
   async addGoogleUserToFirestore(user: User) {
     const userRef = doc(this.firestore, 'users', user.uid);
     await setDoc(userRef, {
       name: user.name,
       email: user.email,
-      picture: user.picture,
+      picture: user.picture || localStorage.getItem(`userPhoto_${user.uid}`) || '../../assets/img/avatar/avatar4.png',
     });
   }
 
