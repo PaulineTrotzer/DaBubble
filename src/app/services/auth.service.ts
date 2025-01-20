@@ -103,6 +103,11 @@ export class AuthService {
           (data) => data.providerId === 'google.com'
         );
         const email = googleProviderData?.email;
+
+        if (result.user.photoURL) {
+          localStorage.setItem(`userPhoto_${result.user.uid}`, result.user.photoURL);
+        }
+        
         this.user = new User({
           picture: result.user.photoURL,
           uid: result.user.uid,

@@ -105,10 +105,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscribeOverlayService();
     this.getAllUsers();
     this.getAllChannels();
-
-    if (this.getSeperateUser) {
-      console.log(this.getSeperateUser['searchHeaderResult']);
-    }
   }
 
   subscribeOverlayService() {

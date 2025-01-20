@@ -186,7 +186,7 @@
             <div *ngIf="checkUsersExsists && !isGuestLogin" class="all-user-contacts">
               <div class="all-user" *ngFor="let user of allUsers" (click)="selectUser(user)">
                 <div class="active-user-div" [class.active]="selectedUser?.id === user.id">
-                  <img [src]="user.picture">
+                  <img class="avatar" [src]="user.picture || getLocalStoragePhoto(user.id) || '../../assets/img/avatar/avatar4.png'" (error)="handleImageError($event)">
                   <div class="status-border">
                     <span [ngClass]="{'online': user.status === 'online', 'offline': user.status === 'offline'}"></span>
                   </div>

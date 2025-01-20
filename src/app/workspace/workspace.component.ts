@@ -163,7 +163,6 @@ openvollWidtChannelOrUserBox() {
 
   checkWidtSize() {
     if (window.innerWidth <= 1200) {
-      console.log('1200 dempq');
       return (this.global.openChannelorUserBox = true);
     } else {
       return (this.global.openChannelorUserBox = false);
@@ -198,7 +197,6 @@ openvollWidtChannelOrUserBox() {
     if (willkommenChannel) {
       this.global.channelSelected = false;
       this.selectChannel(willkommenChannel);
-      console.log((this.global.channelSelected = false));
     }
   }
 
@@ -223,6 +221,14 @@ openvollWidtChannelOrUserBox() {
       if (b.name === 'Willkommen') return 1;
       return 0;
     });
+  }
+
+  getLocalStoragePhoto(uid: string): string | null {
+    return localStorage.getItem(`userPhoto_${uid}`);
+  }
+  
+  handleImageError(event: any) {
+    event.target.src = '../../assets/img/avatar/avatar4.png'; // Your fallback image
   }
 
   async getUserById(userId: string) {

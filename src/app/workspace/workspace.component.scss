@@ -53,6 +53,11 @@
   }
 }
 
+.avatar {
+  max-width: 50px;
+  object-fit: cover;
+}
+
 .channels-container {
   margin: 16px 0;
 }
