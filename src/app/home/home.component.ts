@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   }
 
   setDirectThread() {
-    this.global.currentThreadMessage$.subscribe((messageId) => {
+    this.global.directThread$.subscribe((messageId) => {
       this.directThreadId = messageId;
     });
   }

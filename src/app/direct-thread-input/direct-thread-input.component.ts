@@ -100,7 +100,7 @@ export class DirectThreadInputComponent {
         this.currentThreadMessageId = messageId;
       })
     );
-    this.global.currentThreadMessage$.subscribe((messageId) => {
+    this.global.directThread$.subscribe((messageId) => {
       this.currentThreadMessageId = messageId;
     });
     this.global.channelThread$.subscribe((messageId) => {
@@ -519,7 +519,6 @@ export class DirectThreadInputComponent {
   }    
 
   onFileSelectedDirectThread(event: Event) {
-    console.log('threadi hamar es ste em ')
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       Array.from(input.files).forEach((file) => {

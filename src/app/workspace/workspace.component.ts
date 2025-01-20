@@ -117,41 +117,33 @@ export class WorkspaceComponent implements OnInit {
     }
   }
 
-  selectUser(user: any) {
-    this.userSelected.emit(user);
-    this.selectedChannel = null;
-    this.selectedUser = user;
-    this.global.channelSelected = false;
-    this.id = user.id;
-    this.global.currentThreadMessageSubject.next('');
-    this.global.channelThreadSubject.next(null);
-    this.selectedChannel = null;
-    const actuallyId = this.id;
-    if (
-      this.userId &&
-      this.messageCountsArr?.messageCount &&
-      this.messageCountsArr.messageCount[actuallyId] > 0
-    ) {
-      const docRef = doc(this.firestore, 'messageCounts', this.userId);
-      const resetMessageCount: any = {};
-      resetMessageCount[`messageCount.${actuallyId}`] = 0;
-      updateDoc(docRef, resetMessageCount);
-    }
-    this.global.statusCheck = false;
-    this.openvollWidtChannelOrUserBox();
-    this.hiddenVoolThreadBox();
-    this.checkWidtSize();
-    this.cheackChatOpen();
-    this.selection.setSelectedUser(user);
-  }
 
-  openvollWidtChannelOrUserBox() {
-    if (window.innerWidth <= 1900 && window.innerWidth > 1200) {
-      return (this.global.checkWideChannelorUserBox = true);
-    } else {
-      return (this.global.checkWideChannelorUserBox = false);
-    }
+selectUser(user: any) {
+  this.userSelected.emit(user);
+  this.id = user.id;
+  this.global.directThreadSubject.next('');
+  this.global.channelThreadSubject.next(null);
+  const actuallyId = this.id;
+  if (this.userId && this.messageCountsArr?.messageCount && this.messageCountsArr.messageCount[actuallyId] > 0) {
+    const docRef = doc(this.firestore, 'messageCounts', this.userId);
+    const resetMessageCount: any = {};
+    resetMessageCount[`messageCount.${actuallyId}`] = 0;
+    updateDoc(docRef, resetMessageCount);
+  } 
+   this.global.statusCheck =false;
+   this.openvollWidtChannelOrUserBox();
+   this.hiddenVoolThreadBox();
+   this.checkWidtSize();
+   this.cheackChatOpen();
+}   
+
+openvollWidtChannelOrUserBox() {
+  if(window.innerWidth<=1900 && window.innerWidth > 1200){
+    return this.global.checkWideChannelorUserBox=true;
+  }else{
+    return this.global.checkWideChannelorUserBox=false;
   }
+}
 
   hiddenVoolThreadBox() {
     if (
@@ -279,7 +271,8 @@ export class WorkspaceComponent implements OnInit {
       this.global.currentUserData.id
     );
     this.global.channelSelected = true;
-    this.global.currentThreadMessageSubject.next('');
+    this.channelSelected.emit(channel);
+    this.global.directThreadSubject.next('');
     this.global.channelThreadSubject.next(null);
     this.global.setCurrentChannel(channel);
     this.openvollWidtChannelOrUserBox();

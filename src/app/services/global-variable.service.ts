@@ -40,8 +40,8 @@ export class GlobalVariableService {
   private welcomeChannelSubject = new BehaviorSubject<boolean>(false);
   welcomeChannel$ = this.welcomeChannelSubject.asObservable();
 
-  public currentThreadMessageSubject = new BehaviorSubject<string | null>('');
-  currentThreadMessage$ = this.currentThreadMessageSubject.asObservable();
+  public directThreadSubject = new BehaviorSubject<string | null>('');
+  directThread$ = this.directThreadSubject.asObservable();
 
   public channelThreadSubject = new BehaviorSubject<string | null>(null);
   channelThread$ = this.channelThreadSubject.asObservable();
@@ -89,9 +89,8 @@ export class GlobalVariableService {
     this.channelSelected = false;
   }
 
-  setCurrentThreadMessage(messageId: string) {
-    this.currentThreadMessageSubject.next(messageId);
-    console.log('global Message set:', messageId);
+  setDirectThread(messageId: string) {
+    this.directThreadSubject.next(messageId);
   }
 
   setChannelThread(messageId: string) {

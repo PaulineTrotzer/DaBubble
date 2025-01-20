@@ -100,7 +100,7 @@ export class ChannelThreadInputComponent {
         this.currentThreadMessageId = messageId;
       })
     );
-    this.global.currentThreadMessage$.subscribe((messageId) => {
+    this.global.directThread$.subscribe((messageId) => {
       this.currentThreadMessageId = messageId;
     });
     this.global.channelThread$.subscribe((messageId) => {

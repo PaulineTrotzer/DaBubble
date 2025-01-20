@@ -23,6 +23,7 @@ import {
   orderBy,
   setDoc,
   deleteDoc,
+  QuerySnapshot,
 } from '@angular/fire/firestore';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -45,6 +46,7 @@ import {
   trigger,
 } from '@angular/animations';
 import { MentionMessageBoxComponent } from '../mention-message-box/mention-message-box.component';
+import { getAuth } from '@angular/fire/auth';
 
 
 
@@ -88,15 +90,18 @@ import { MentionMessageBoxComponent } from '../mention-message-box/mention-messa
   ],
 })
 export class DirectThreadComponent implements OnInit {
+  @Output() userSelectedFromDirectThread = new EventEmitter<any>();
   @Output() closeDirectThread = new EventEmitter<void>();
   @Input() selectedUser: any;
   @ViewChild('messageContainer') messageContainer!: ElementRef;
-  chatMessage: string = '';
-  showUserBubble: boolean = false;
   global = inject(GlobalVariableService);
-  currentUser: User = new User();
   firestore = inject(Firestore);
   userService = inject(UserService);
+  overlayStatusService = inject(OverlayStatusService);
+  threadControlService = inject(ThreadControlService);
+  chatMessage: string = '';
+  showUserBubble: boolean = false;
+  currentUser: User = new User();
   userID: any | null = null;
   messagesData: any[] = [];
   showOptionBar: { [key: string]: boolean } = {};
@@ -110,10 +115,8 @@ export class DirectThreadComponent implements OnInit {
     iconThird: 'assets/img/third.svg',
   };
   isDirectThreadOpen: boolean = true;
-  overlayStatusService = inject(OverlayStatusService);
   reactions: { [messageId: string]: any[] } = {};
   selectFiles: any[] = [];
-  threadControlService = inject(ThreadControlService);
   subscription = new Subscription();
   shouldScrollToBottom = false;
   firstInitialisedThreadMsg: string | null = null;
@@ -130,45 +133,125 @@ export class DirectThreadComponent implements OnInit {
   editableMessageText: string = '';
   scrollHeightInput: any;
   editWasClicked = false;
-  showEditOption: { [messageId: string]: boolean } = {};
+  showEditOption: boolean = true;
   hoveredReactionIcon: boolean = false;
   wasClickedInDirectThread = false;
   getAllUsersName: any[] = [];
-  @Output() userSelectedFromDirectThread = new EventEmitter<any>();
+  topicMessage: any;
+  directMessageId: any;
+  messages: any[] = [];
+  showTopicBar: boolean = true;
+  showAnswerBar: string | null = null;
+  showEditDialog: string | null = null;
+  editTopicMode: boolean = false;
+  editableTopicText: string = '';
+  debugReactionBar: boolean = true;
+  currentUserLastEmojis: string[] = [];
+  debugReactionInfo: boolean = true;
 
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
   async ngOnInit(): Promise<void> {
-    await this.initializeUser();
-    await this.subscribeToThreadMessages();
-    await this.getAllUsersname();
-    this.checkLastMessageForScroll();
+    this.global.directThread$.subscribe((threadId) => {
+      if (threadId) {
+        this.directMessageId = threadId;
+        this.getTopic();
+        this.getAllUsersname();
+        this.loadThreadMessages();
+        this.loadCurrentUserEmojis();
+      }
+    });
     this.currentUserId = this.route.snapshot.paramMap.get('id');
   }
 
-  toggleEditOption(messageId: string, show: boolean) {
-    this.showEditOption[messageId] = show;
-  }
-
-  checkLastMessageForScroll() {
-    this.threadControlService.lastMessageId$.subscribe((id) => {
-      if (id && id !== '0') {
-        this.scrollToLastMessage(id);
-      } else {
-      }
+  async getTopic() {
+    return new Promise<void>((resolve) => {
+      const docRef = doc(this.firestore, 'messages', this.directMessageId);
+      onSnapshot(docRef, (doc) => {
+        const data = doc.data();
+        if (data) {
+          if (data['timestamp']?.seconds) {
+            data['timestamp'] = new Date(data['timestamp'].seconds * 1000);
+          }
+          this.topicMessage = { ...data, id: this.directMessageId };
+          resolve();
+        }
+      });
     });
-    if (this.lastMessageId === '0') {
-      this.initializeLastMessageId();
-    }
   }
 
-  displayDayInfo(index: number): boolean {
-    if (index === 0) return true;
-    const currentMessage = this.messagesData[index];
-    const previousMessage = this.messagesData[index - 1];
-    return !this.isSameDay(
-      new Date(currentMessage.timestamp),
-      new Date(previousMessage.timestamp)
+  async loadCurrentUserEmojis() {
+      const auth = getAuth();
+      const currentUserId = auth.currentUser?.uid;
+  
+      if (currentUserId) {
+        const userDocRef = doc(this.firestore, 'users', currentUserId);
+  
+        onSnapshot(userDocRef, (docSnapshot) => {
+          const userData = docSnapshot.data();
+          if (userData?.['lastEmojis']) {
+            this.currentUserLastEmojis = userData['lastEmojis'];
+          }
+        });
+      } else {
+        console.warn('No current user logged in');
+      }
+    }
+
+  async loadThreadMessages() {
+    if (!this.directMessageId) {
+      console.log('No message selected!');
+      return;
+    }
+    const messageRef = collection(
+      this.firestore,
+      'messages',
+      this.directMessageId,
+      'threadMessages'
     );
+
+    const q = query(messageRef, orderBy('timestamp', 'asc'));
+    onSnapshot(q, (querySnapshot: any) => {
+      this.messages = querySnapshot.docs.map((doc: any) => {
+        const data = doc.data();
+        if (data.timestamp && data.timestamp.seconds) {
+          data.timestamp = new Date(data.timestamp.seconds * 1000);
+        }
+        return { id: doc.id, ...data };
+      });
+    });
+    console.log(this.messages)
+  }
+
+  toggleEditOption(messageId: string) {
+    this.showEditDialog = this.showEditDialog === messageId ? null : messageId;
+  }
+
+  enableEditTopic(): void {
+    this.editTopicMode = true;
+    this.editableTopicText = this.topicMessage.text;
+  }
+
+  cancelTopicEdit(): void {
+    this.editTopicMode = false;
+    this.editableTopicText = '';
+  }
+
+  async saveTopicEdit(): Promise<void> {
+    try {
+      if (!this.editableTopicText.trim()) {
+        console.error('Topic text cannot be empty');
+        return;
+      }
+      const docRef = doc(this.firestore, 'messages', this.directMessageId);
+      await updateDoc(docRef, { 
+        text: this.editableTopicText,
+        editedTextShow: true,
+       });
+      this.topicMessage.text = this.editableTopicText; // Update the local view
+      this.editTopicMode = false; // Exit edit mode
+    } catch (error) {
+      console.error('Error saving the topic edit:', error);
+    }
   }
 
   editMessages(message: any) {
@@ -244,7 +327,6 @@ export class DirectThreadComponent implements OnInit {
     this.isFirstClick = true;
   }
 
-
   onCancelMessageBox(): void {
     this.wasClickedInDirectThread = false;
   }
@@ -257,7 +339,7 @@ export class DirectThreadComponent implements OnInit {
       }
       const messageRef = doc(
         this.firestore,
-        `messages/${this.firstInitialisedThreadMsg}/threadMessages/${message.id}`
+        `messages/${this.directMessageId}/threadMessages/${message.id}`
       );
       if (!this.editableMessageText || this.editableMessageText.trim() === '') {
         await deleteDoc(messageRef);
@@ -265,7 +347,6 @@ export class DirectThreadComponent implements OnInit {
         const editMessage = {
           text: this.editableMessageText,
           editedTextShow: true,
-          editedAt: new Date().toISOString(),
         };
         await updateDoc(messageRef, editMessage);
       }
@@ -289,29 +370,6 @@ export class DirectThreadComponent implements OnInit {
     this.scrollHeightInput = height;
   }
 
-  getDayInfoForMessage(index: number): string {
-    const messageDate = new Date(this.messagesData[index].timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    if (this.isSameDay(messageDate, today)) {
-      return 'Heute';
-    } else if (this.isSameDay(messageDate, yesterday)) {
-      return 'Gestern';
-    } else {
-      return this.formatDate(messageDate);
-    }
-  }
-
-  isSameDay(date1: Date, date2: Date): boolean {
-    return (
-      date1.getDate() === date2.getDate() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getFullYear() === date2.getFullYear()
-    );
-  }
-
   formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -322,7 +380,7 @@ export class DirectThreadComponent implements OnInit {
   async initializeLastMessageId(): Promise<void> {
     try {
       await this.threadControlService.initializeLastMessageId(
-        this.global.currentThreadMessageSubject.value
+        this.global.directThreadSubject.value
       );
     } catch (error) {
       console.error('fehler beim Initialisieren der lastMessageId:', error);
@@ -357,16 +415,6 @@ export class DirectThreadComponent implements OnInit {
     this.showReactionPopUpBoth[messageId] = show;
   }
 
-  async subscribeToThreadMessages() {
-    this.threadControlService.firstThreadMessageId$.subscribe(
-      async (firstInitialisedThreadMsg) => {
-        if (firstInitialisedThreadMsg) {
-          await this.processThreadMessages(firstInitialisedThreadMsg);
-        }
-      }
-    );
-  }
-
   getUserIds(reactions: {
     [key: string]: { emoji: string; counter: number };
   }): string[] {
@@ -379,15 +427,6 @@ export class DirectThreadComponent implements OnInit {
     }
   }
 
-  async initializeUser() {
-    this.route.paramMap.subscribe(async (paramMap) => {
-      const userID = paramMap.get('id');
-      if (userID) {
-        await this.loadCurrentUser(userID);
-      }
-    });
-  }
-
   async loadCurrentUser(userID: string) {
     try {
       const userResult = await this.userService.getUser(userID);
@@ -396,16 +435,6 @@ export class DirectThreadComponent implements OnInit {
       }
     } catch (error) {
       console.error('Fehler beim Laden des Benutzers:', error);
-    }
-  }
-
-  async processThreadMessages(firstInitialisedThreadMsg: string) {
-    this.firstInitialisedThreadMsg = firstInitialisedThreadMsg;
-    if (this.firstInitialisedThreadMsg) {
-      await this.handleFirstThreadMessageAndPush(
-        this.firstInitialisedThreadMsg
-      );
-      await this.getThreadMessages(this.firstInitialisedThreadMsg);
     }
   }
 
@@ -422,7 +451,7 @@ export class DirectThreadComponent implements OnInit {
         if (docData?.['firstMessageCreated']) {
           this.currentThreadMessage = {
             id: docSnapshot.id,
-            ...docData, 
+            ...docData,
           };
           return;
         }
@@ -438,20 +467,16 @@ export class DirectThreadComponent implements OnInit {
       );
       await this.settingDataforFireBase(
         threadMessagesRef,
-        this.currentThreadMessage 
+        this.currentThreadMessage
       );
     } catch (error) {
       console.error('Fehler der Thread-Nachricht:', error);
     }
   }
-  
 
-  async settingDataforFireBase(
-    threadMessagesRef: any,
-    threadMessageData: any 
-  ) {
+  async settingDataforFireBase(threadMessagesRef: any, threadMessageData: any) {
     try {
-/*       if (
+      /*       if (
         !this.selectedUser ||
         !this.selectedUser.uid ||
         !this.global.currentUserData
@@ -477,40 +502,12 @@ export class DirectThreadComponent implements OnInit {
         firstMessageCreated: true,
         reactions: '',
       };
-  
+
       const docRef = await addDoc(threadMessagesRef, messageData);
       console.log('Erstellte Nachricht-ID:', docRef.id);
       this.threadControlService.setLastMessageId(docRef.id);
     } catch (error) {
       console.error('Fehler beim Hinzufügen der Nachricht:', error);
-    }
-  }
-  
-
-  async getThreadMessages(messageId: any) {
-    try {
-      const threadMessagesRef = collection(
-        this.firestore,
-        `messages/${messageId}/threadMessages`
-      );
-      const q = query(threadMessagesRef, orderBy('timestamp', 'asc'));
-      onSnapshot(q, (querySnapshot) => {
-        console.log(querySnapshot.docs.map((doc) => doc.data()));
-        this.messagesData = querySnapshot.docs.map((doc) => {
-          const messageData = doc.data();
-          if (messageData['timestamp'] && messageData['timestamp'].toDate) {
-            messageData['timestamp'] = messageData['timestamp'].toDate();
-          }
-          return {
-            id: doc.id,
-            ...messageData,
-          };
-        });
-        this.shouldScrollToBottom = true;
-        this.cdr.detectChanges();
-      });
-    } catch (error) {
-      console.error('fehler getMessagws', error);
     }
   }
 
@@ -534,37 +531,45 @@ export class DirectThreadComponent implements OnInit {
     this.overlayStatusService.setOverlayStatus(true);
   }
 
-  addEmojiToEdit(event: any) {
+  addEmojiToEdit(event: any, target: 'topic' | 'message'): void {
     if (event && event.emoji && event.emoji.native) {
       const emoji = event.emoji.native;
-      this.editableMessageText = (this.editableMessageText || '') + emoji;
+  
+      if (target === 'topic') {
+        this.editableTopicText = (this.editableTopicText || '') + emoji;
+      } else if (target === 'message') {
+        this.editableMessageText = (this.editableMessageText || '') + emoji;
+      }
     } else {
-      console.error('kein Emoji ausgewählt');
+      console.error('No emoji selected');
     }
   }
 
   async getThreadMessageRef(currentMessageId: string): Promise<any> {
-    let threadMessageRef = doc(
+    console.log(currentMessageId);
+  
+    const topicMessageRef = doc(this.firestore, 'messages', currentMessageId);
+    const threadMessageRef = doc(
       this.firestore,
-      `messages/${currentMessageId}/threadMessages/${currentMessageId}`
+      'messages',
+      this.directMessageId,
+      'threadMessages',
+      currentMessageId
     );
-    if (!this.firstThreadValue) {
-      const firstInitialisedThreadMsg = await firstValueFrom(
-        this.threadControlService.firstThreadMessageId$
-      );
-      threadMessageRef = doc(
-        this.firestore,
-        `messages/${firstInitialisedThreadMsg}/threadMessages/${currentMessageId}`
-      );
+  
+    const topicDocSnapshot = await getDoc(topicMessageRef);
+    if (topicDocSnapshot.exists()) {
+      return topicMessageRef;
     }
-    if (this.firstThreadValue) {
-      threadMessageRef = doc(
-        this.firestore,
-        `messages/${this.firstThreadValue}/threadMessages/${currentMessageId}`
-      );
+    const threadDocSnapshot = await getDoc(threadMessageRef);
+    if (threadDocSnapshot.exists()) {
+      return threadMessageRef;
     }
-    return threadMessageRef;
+  
+    console.error('No valid document reference found for the given ID.');
+    return null;
   }
+  
 
   async getThreadMessageDoc(threadMessageRef: any): Promise<any> {
     const threadMessageDoc = await getDoc(threadMessageRef);
@@ -575,28 +580,52 @@ export class DirectThreadComponent implements OnInit {
     return threadMessageDoc.data();
   }
 
-  async addEmoji(event: any, currentMessageId: string, userId: string) {
-    const emoji = event.emoji.native;
-    const threadMessageRef = await this.getThreadMessageRef(currentMessageId);
-    const threadMessageData = await this.getThreadMessageDoc(threadMessageRef);
-    if (!threadMessageData) return;
-    if (!threadMessageData['reactions']) {
-      threadMessageData['reactions'] = {};
+  async handleLastEmojiClick(emoji: string, messageId: string, userId: string) {
+    try {
+      const threadMessageRef = await this.getThreadMessageRef(messageId);
+      const threadMessageData = await this.getThreadMessageDoc(threadMessageRef);
+      if (!threadMessageData) return;
+  
+      if (!threadMessageData['reactions']) {
+        threadMessageData['reactions'] = {};
+      }
+  
+
+      const existingReaction = threadMessageData['reactions'][userId];
+      if (existingReaction) {
+        if (existingReaction.emoji === emoji) {
+          threadMessageData['reactions'][userId].counter = 
+            existingReaction.counter === 0 ? 1 : 0;
+        } else {
+          threadMessageData['reactions'][userId] = {
+            emoji: emoji,
+            counter: 1
+          };
+        }
+      } else {
+        threadMessageData['reactions'][userId] = {
+          emoji: emoji,
+          counter: 1
+        };
+      }
+
+      await updateDoc(threadMessageRef, {
+        reactions: threadMessageData['reactions']
+      });
+    } catch (error) {
+      console.error('Error handling emoji click:', error);
     }
-    const userReaction = threadMessageData['reactions'][userId];
-    if (userReaction && userReaction.emoji === emoji) {
-      threadMessageData['reactions'][userId].counter =
-        userReaction.counter === 0 ? 1 : 0;
-    } else {
-      threadMessageData['reactions'][userId] = {
-        emoji: emoji,
-        counter: 1,
-      };
-    }
-    await updateDoc(threadMessageRef, {
-      reactions: threadMessageData['reactions'],
-    });
   }
+
+  async addEmoji(event: any, messageId: string, userId: string) {
+    try {
+      const emoji = event.emoji.native;
+      await this.handleLastEmojiClick(emoji, messageId, userId);
+    } catch (error) {
+      console.error('Error adding emoji reaction:', error);
+    }
+  }
+  
 
   TwoReactionsTwoEmojis(recipientId: any, senderId: any): boolean {
     if (recipientId?.counter > 0 && senderId?.counter > 0) {
@@ -727,16 +756,15 @@ export class DirectThreadComponent implements OnInit {
   onClose() {
     this.toggleThreadStatus(false);
     this.closeDirectThread.emit();
-    this.global.currentThreadMessageSubject.next(null);
+    this.global.directThreadSubject.next(null);
     this.closeThreadVollWidth();
     this.closeThreadResponsive();
   }
 
-
-  closeThreadResponsive():void{
-    if(window.innerWidth<=1200 && this.global.openChannelOrUserThread){
-      this.global.openChannelOrUserThread=false;
-      this.global.openChannelorUserBox=true;
+  closeThreadResponsive(): void {
+    if (window.innerWidth <= 1200 && this.global.openChannelOrUserThread) {
+      this.global.openChannelOrUserThread = false;
+      this.global.openChannelorUserBox = true;
     }
     } 
   
@@ -751,7 +779,4 @@ export class DirectThreadComponent implements OnInit {
   deleteFile(index: number) {
     this.global.selectThreadFiles.splice(index, 1);
   } 
-
-
-
-  }
+}

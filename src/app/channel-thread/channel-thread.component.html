@@ -29,7 +29,7 @@
 
     
 
-    <div class="topic-container" *ngIf="topicMessage" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false">
+    <div class="topic-container" *ngIf="topicMessage" (mouseenter)="hoveredTopic = true" (mouseleave)="hoveredTopic = false; showEditDialog = null;">
       <div class="edit-message-container" *ngIf="showEditArea === topicMessage.id">
         <form>
           <div class="img-container textarea" (click)="togglePicker(topicMessage.id, true)">
@@ -154,10 +154,11 @@
             </div>
             <span *ngFor="let reaction of topicMessage.reactions | keyvalue" class="reaction"
               (mouseenter)="onReactionHover(topicMessage!, reaction.key)" (mouseleave)="
-                hoveredReactionMessageId = null; hoveredEmoji = null
+                hoveredReactionMessageId = null; hoveredEmoji = null;
               " (click)="addEmojiToMessage(reaction.key, topicMessage.id)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
+            <span *ngIf="topicMessage.isEdited">(Bearbeited)</span>
             <!--             <div class="img-container" *ngIf="hasReactions(topicMessage?.reactions!)"
               (click)="togglePicker(topicMessage?.id!)">
               <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -182,7 +183,7 @@
       <h3 *ngIf="messages.length > 1">{{ messages.length }} Antworten</h3>
       <div class="line"></div>
     </div>
-    <div class="answers-container" (mouseenter)="hoveredMessageId = message.id" (mouseleave)="hoveredMessageId = null"
+    <div class="answers-container" (mouseenter)="hoveredMessageId = message.id" (mouseleave)="hoveredMessageId = null; showEditDialog = null"
       *ngFor="let message of messages">
       <div class="edit-message-container" *ngIf="showEditArea === message.id">
         <form> 
@@ -210,7 +211,7 @@
               Speichern
             </button> -->
             <img class="cancel-icon" (click)="cancelEdit()" src="assets/img/cross.svg" alt="Abbrechen">
-            <img class="save-icon" (click)="saveEditedMessage(topicMessage?.id!)" src="assets/img/check-mark.svg"
+            <img class="save-icon" (click)="saveEditedMessage(message.id)" src="assets/img/check-mark.svg"
               alt="Speichern">
           </div>
         </form>
@@ -302,6 +303,7 @@
               " (click)="addEmojiToMessage(reaction.key, message.id!)">
               {{ reaction.key }} {{ reaction.value.length }}
             </span>
+            <span *ngIf="message.isEdited">(Bearbeited)</span>
             <!--             <div class="img-container" *ngIf="hasReactions(message.reactions)" (click)="togglePicker(message.id)">
               <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                 class="icon">

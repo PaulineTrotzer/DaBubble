@@ -93,7 +93,7 @@ export class ThreadControlService {
       const unsubscribe = onSnapshot(
         collection(this.firestore, `messages/${messageId}/threadMessages`),
         (snapshot) => {
-          const replyCount = snapshot.size - 1;
+          const replyCount = snapshot.size;
           observer.next(replyCount);
         }
       );

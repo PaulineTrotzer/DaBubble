@@ -100,7 +100,7 @@ export class InputFieldComponent implements OnInit, OnChanges {
         this.currentThreadMessageId = messageId;
       })
     );
-    this.global.currentThreadMessage$.subscribe((messageId) => {
+    this.global.directThread$.subscribe((messageId) => {
       this.currentThreadMessageId = messageId;
     });
     this.global.channelThread$.subscribe((messageId) => {
@@ -358,6 +358,7 @@ export class InputFieldComponent implements OnInit, OnChanges {
       stickerBoxOpacity: null,
       selectedFiles: this.selectFiles,
       editedTextShow: false,
+      reactions: {},
     };
   }
 

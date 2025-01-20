@@ -156,6 +156,12 @@ app-input-field {
   margin-top: -28px;
 }
 
+.message-info-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .main-mesage-info-current {
   width: 100%;
   position: relative;
@@ -314,10 +320,15 @@ app-input-field {
   color: #000000;
 }
 
+.reverse {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
 .avatar-box {
   display: flex;
   align-items: center;
-  gap: 21px;
+  gap: 8px;
   position: relative;
 
   img {
